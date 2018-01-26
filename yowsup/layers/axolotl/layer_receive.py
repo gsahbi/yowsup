@@ -218,6 +218,20 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         except AttributeError:
             logger.warning("AttributeError: 'bytes' object has no attribute 'encode'. Skipping 'encode()'")
             pass
+
+        # TODO: make this run when we've got an issue with protobuf and DEBUG enabled
+        # it should replace log layer coz it just dumps gibberish
+        if logger.isEnabledFor(logging.ERROR):
+            from yowsup.layers.protocol_messages.protobuf_inspector.types import StandardParser
+
+            # Create and initialize parser
+            parser = StandardParser()
+            parser.types["root"] = {}
+            parser.types["root"]["compact"] = False
+
+            # PARSE!
+            print(parser.safe_call(parser.match_handler("message"), serializedData, "root"))
+
         handled = False
         try:
             m.ParseFromString(serializedData)
