@@ -222,7 +222,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         # TODO: make this run when we've got an issue with protobuf and DEBUG enabled
         # it should replace log layer coz it just dumps gibberish
         if logger.isEnabledFor(logging.ERROR):
-            from yowsup.layers.protocol_messages.protobuf_inspector.types import StandardParser
+            from yowsup.layers.protocol_messages.protobuf_inspect.types import StandardParser
 
             # Create and initialize parser
             parser = StandardParser()
