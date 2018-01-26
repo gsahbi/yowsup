@@ -1,33 +1,33 @@
-from .layer_base import AxolotlBaseLayer
+import binascii
+import copy
+import logging
+import sys
 
-from yowsup.layers.protocol_receipts.protocolentities import OutgoingReceiptProtocolEntity
-from yowsup.layers.protocol_messages.proto.wa_pb2 import *
-from yowsup.layers.axolotl.protocolentities import *
-from yowsup.structs import ProtocolTreeNode
-from yowsup.layers.axolotl.props import PROP_IDENTITY_AUTOTRUST
-
-from axolotl.util.hexutil import HexUtil
-from axolotl.util.keyhelper import KeyHelper
-from yowsup.layers.protocol_acks.protocolentities import OutgoingAckProtocolEntity
+from axolotl.axolotladdress import AxolotlAddress
+from axolotl.duplicatemessagexception import DuplicateMessageException
+from axolotl.ecc.curve import Curve
+from axolotl.groups.groupcipher import GroupCipher
+from axolotl.groups.groupsessionbuilder import GroupSessionBuilder
+from axolotl.groups.senderkeyname import SenderKeyName
+from axolotl.invalidkeyidexception import InvalidKeyIdException
+from axolotl.invalidmessageexception import InvalidMessageException
+from axolotl.nosessionexception import NoSessionException
 from axolotl.protocol.prekeywhispermessage import PreKeyWhisperMessage
+from axolotl.protocol.senderkeydistributionmessage import SenderKeyDistributionMessage
 from axolotl.protocol.whispermessage import WhisperMessage
 from axolotl.sessioncipher import SessionCipher
-from axolotl.groups.groupcipher import GroupCipher
-from axolotl.invalidmessageexception import InvalidMessageException
-from axolotl.duplicatemessagexception import DuplicateMessageException
-from axolotl.invalidkeyidexception import InvalidKeyIdException
-from axolotl.nosessionexception import NoSessionException
 from axolotl.untrustedidentityexception import UntrustedIdentityException
-from axolotl.axolotladdress import AxolotlAddress
-from axolotl.groups.senderkeyname import SenderKeyName
-from axolotl.groups.groupsessionbuilder import GroupSessionBuilder
-from axolotl.protocol.senderkeydistributionmessage import SenderKeyDistributionMessage
-from axolotl.ecc.curve import Curve
+from axolotl.util.hexutil import HexUtil
+from axolotl.util.keyhelper import KeyHelper
 
-import binascii
-import logging
-import copy
-import sys
+from yowsup.layers.axolotl.props import PROP_IDENTITY_AUTOTRUST
+from yowsup.layers.axolotl.protocolentities import *
+from yowsup.layers.protocol_acks.protocolentities import OutgoingAckProtocolEntity
+from yowsup.layers.protocol_messages.proto.wa_pb2 import *
+from yowsup.layers.protocol_receipts.protocolentities import OutgoingReceiptProtocolEntity
+from yowsup.structs import ProtocolTreeNode
+from .layer_base import AxolotlBaseLayer
+
 logger = logging.getLogger(__name__)
 
 class AxolotlReceivelayer(AxolotlBaseLayer):
@@ -218,6 +218,21 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         except AttributeError:
             logger.warning("AttributeError: 'bytes' object has no attribute 'encode'. Skipping 'encode()'")
             pass
+
+        # TODO: make this run when we've got an issue with protobuf and DEBUG enabled
+        # it should replace log layer coz it just dumps gibberish
+        if logger.isEnabledFor(logging.ERROR):
+            from yowsup.layers.protocol_messages.protobuf_inspector.types import StandardParser
+
+            # Create and initialize parser
+            parser = StandardParser()
+            parser.types["root"] = {}
+            parser.types["root"]["compact"] = False
+
+            # PARSE!
+            print(parser.safe_call(parser.match_handler("message"), serializedData, "root"))
+
+
         handled = False
         try:
             m.ParseFromString(serializedData)
