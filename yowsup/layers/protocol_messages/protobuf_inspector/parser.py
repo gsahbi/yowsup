@@ -32,19 +32,22 @@ class Parser(object):
     # Formatting
 
     def indent(self, text, indent=None):
-        if indent is None: indent = self.default_indent
+        if indent is None:
+            indent = self.default_indent
         lines = ((indent + line if len(line) else line) for line in text.split(u"\n"))
         return u"\n".join(lines)
 
-    def to_display_compactly(self, type, lines):
+    def to_display_compactly(self, type_, lines):
         try:
-            return self.types[type]["compact"]
+            return self.types[type_]["compact"]
         except KeyError as e:
             pass
 
         for line in lines:
-            if u"\n" in line or len(line) > self.compact_max_line_length: return False
-        if sum(len(line) for line in lines) > self.compact_max_length: return False
+            if u"\n" in line or len(line) > self.compact_max_line_length:
+                return False
+        if sum(len(line) for line in lines) > self.compact_max_length:
+            return False
         return True
 
     def hex_dump(self, file, mark=None):
@@ -53,7 +56,7 @@ class Parser(object):
         decorate = lambda i, x: \
             x if (mark is None or offset + i < mark) else dim(x)
         while True:
-            chunk = [ord(x) for x in file.read(self.bytes_per_line)]
+            chunk = [x for x in file.read(self.bytes_per_line)]
             if not len(chunk):
                 break
             padded_chunk = chunk + [None] * max(0, self.bytes_per_line - len(chunk))
@@ -72,28 +75,29 @@ class Parser(object):
             chunk = x.read()
             x = BytesIO(chunk)
         except Exception as e:
+            x = BytesIO(x)
             pass
 
         try:
             return handler(x, *wargs)
         except Exception as e:
             self.errors_produced.append(e)
-            hex_dump = u"" if chunk is False else u"\n\n%s\n" % self.hex_dump(BytesIO(chunk), x.tell())[0]
+            hex_dump = u"" if chunk is False else u"\n\n%s\n" % self.hex_dump(chunk, x.tell())[0]
             return u"%s: %s%s" % (fg(u"ERROR", 1), self.indent(format_exc(e)).strip(), self.indent(hex_dump))
 
-    # Select suitable native type to use
+    # Select suitable native type_ to use
 
-    def match_native_type(self, type):
-        type_primary = type.split(u" ")[0]
+    def match_native_type(self, type_):
+        type_primary = type_.split(u" ")[0]
         if type_primary in self.native_types:
             return self.native_types[type_primary]
         return self.native_types[self.default_handler]
 
-    def match_handler(self, type, wire_type=None):
-        native_type = self.match_native_type(type)
+    def match_handler(self, type_, wire_type=None):
+        native_type = self.match_native_type(type_)
         if not (wire_type is None) and wire_type != native_type[1]:
-            raise Exception("Found wire type %d (%s), wanted type %d (%s)" % (
-            wire_type, self.default_handlers[wire_type], native_type[1], type))
+            raise Exception("Found wire type_ %d (%s), wanted type_ %d (%s)" % (
+            wire_type, self.default_handlers[wire_type], native_type[1], type_))
         return native_type[0]
 
 
