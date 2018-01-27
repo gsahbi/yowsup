@@ -69,7 +69,8 @@ class StandardParser(Parser):
             if wire_type is 3:
                 x = self.parse_message(file, type_, key)
             else:
-                x = self.safe_call(lambda x: self.match_handler(type_, wire_type)(x, type_), x)
+                handler = self.match_handler(type_, wire_type)
+                x = self.safe_call(lambda x_: handler(x_, type_), x)
 
             if field is None: field = u"<%s>" % type_
             lines.append(u"%s %s = %s" % (fg(str(key), 4), field, x))
