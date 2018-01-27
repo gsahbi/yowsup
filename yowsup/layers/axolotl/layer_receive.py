@@ -1,3 +1,5 @@
+import os
+
 from .layer_base import AxolotlBaseLayer
 
 from yowsup.layers.protocol_receipts.protocolentities import OutgoingReceiptProtocolEntity
@@ -219,17 +221,11 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             logger.warning("AttributeError: 'bytes' object has no attribute 'encode'. Skipping 'encode()'")
             pass
 
-        # TODO: make this run when we've got an issue with protobuf and DEBUG enabled
-        # it should replace log layer coz it just dumps gibberish
-        if logger.isEnabledFor(logging.ERROR):
+        if "YOWSUP_PROTOBUF_DEBUG" in os.environ:
             from yowsup.layers.protocol_messages.protobuf_inspect.types import StandardParser
-
-            # Create and initialize parser
             parser = StandardParser()
             parser.types["root"] = {}
             parser.types["root"]["compact"] = False
-
-            # PARSE!
             print(parser.safe_call(parser.match_handler("message"), serializedData, "root"))
 
         handled = False
