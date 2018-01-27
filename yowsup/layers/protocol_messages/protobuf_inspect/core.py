@@ -5,7 +5,7 @@ import io, struct
 # No guessing going on here. These functions return None on EOF.
 
 def read_varint(file):
-    result = 0;
+    result = 0
     pos = 0
     while True:
         b = file.read(1)
