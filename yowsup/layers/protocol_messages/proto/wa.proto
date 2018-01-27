@@ -9,9 +9,12 @@ message Message {
         ImageMessage    image_message       = 3;
         ContactMessage  contact_message     = 4;
         LocationMessage location_message    = 5;
-        RichMessage     rich_message        = 6;
+        ExtendedTextMessage  extended_text_message = 6;
         DocumentMessage document_message    = 7;
         AudioMessage    audio_message       = 8;
+        VideoMessage    video_message       = 9;
+        VideoMessage    video_message       = 9;
+        VideoMessage    video_message       = 9;
         VideoMessage    video_message       = 9;
     }
 }
@@ -49,11 +52,14 @@ message VideoMessage {
     string mime_type      = 2;
     bytes file_sha256     = 3;
     uint64 file_length    = 4;
-    uint64 duration       = 5;
+    uint64 seconds        = 5;
     bytes media_key       = 6;
-    string caption        = 7;
-    bytes file_enc_sha256 = 8;
+    uint32 height         = 9;
+    uint32 width          = 10;
+    bytes file_enc_sha256 = 11;
     bytes jpeg_thumbnail  = 16;
+    ContextInfo context_info = 17;
+    bytes streaming_sidecar = 18;
 }
 
 message LocationMessage {
@@ -66,31 +72,33 @@ message LocationMessage {
 
 }
 message DocumentMessage {
-    string url = 1;
-    string mimeType = 2;
-    string title = 3;
-    bytes file_sha256 = 4;
-    uint64 file_length = 5;
-    uint32 page_count = 6;
-    bytes media_key = 7;
-    bytes jpeg_thumbnail = 16;
+    string url            = 1;
+    string mimeType       = 2;
+    string title          = 3;
+    bytes file_sha256     = 4;
+    uint64 file_length    = 5;
+    uint32 page_count     = 6;
+    bytes media_key       = 7;
+    bytes jpeg_thumbnail  = 16;
 }
 
 
-message RichMessage {
-    string text = 1;
-    string matched_text = 2;
-    string canonical_url = 4;
-    string description = 5;
-    string title = 6;
-    bytes jpeg_thumbnail = 16;
-    RepliedMessage replied_message = 17;
+message ExtendedTextMessage {
+    string text              = 1;
+    string matched_text      = 2;
+    string canonical_url     = 4;
+    string description       = 5;
+    string title             = 6;
+    bytes jpeg_thumbnail     = 16;
+    ContextInfo context_info = 17;
 }
 
-message RepliedMessage {
-    string message_id = 1;
-    string reply_to = 2;
-    Message message = 3;
+message ContextInfo {
+    string stanza_id = 1;
+    string participant = 2;
+    Message quoted_message_ = 3;
+    string remote_jid = 4;
+    string mentioned_jid = 15;
 }
 
 message ContactMessage {
