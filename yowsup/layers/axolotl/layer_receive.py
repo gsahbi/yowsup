@@ -25,6 +25,7 @@ from axolotl.groups.senderkeyname import SenderKeyName
 from axolotl.groups.groupsessionbuilder import GroupSessionBuilder
 from axolotl.protocol.senderkeydistributionmessage import SenderKeyDistributionMessage
 from axolotl.ecc.curve import Curve
+from io import BytesIO
 
 import binascii
 import logging
@@ -226,7 +227,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             parser = StandardParser()
             parser.types["root"] = {}
             parser.types["root"]["compact"] = False
-            print(parser.safe_call(parser.match_handler("message"), serializedData, "root"))
+            print(parser.safe_call(parser.match_handler("message"), BytesIO(serializedData), "root"))
 
         handled = False
         try:
