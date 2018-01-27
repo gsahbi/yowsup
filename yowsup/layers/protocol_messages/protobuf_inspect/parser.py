@@ -75,8 +75,6 @@ class Parser(object):
             chunk = x.read()
             x = BytesIO(chunk)
         except Exception as e:
-            if isinstance(x, bytes):
-                x = BytesIO(x)
             pass
 
         try:
