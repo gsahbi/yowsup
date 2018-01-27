@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='wa.proto',
   package='com.whatsapp.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\xf4\x03\n\x07Message\x12Y\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x30.com.whatsapp.proto.SenderKeyDistributionMessage\x12\x16\n\x0c\x63onversation\x18\x01 \x01(\tH\x00\x12\x39\n\rimage_message\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12=\n\x0f\x63ontact_message\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12?\n\x10location_message\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12\x37\n\x0crich_message\x18\x06 \x01(\x0b\x32\x1f.com.whatsapp.proto.RichMessageH\x00\x12?\n\x10\x64ocument_message\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x39\n\rvideo_message\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x42\x06\n\x04\x62ody\"`\n\x1cSenderKeyDistributionMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\xcc\x01\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\xbf\x01\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x10\n\x08\x64uration\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0f\n\x07\x63\x61ption\x18\x07 \x01(\t\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\x8a\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\xa8\x01\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x10\n\x08mimeType\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\xc1\x01\n\x0bRichMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12;\n\x0freplied_message\x18\x11 \x01(\x0b\x32\".com.whatsapp.proto.RepliedMessage\"d\n\x0eRepliedMessage\x12\x12\n\nmessage_id\x18\x01 \x01(\t\x12\x10\n\x08reply_to\x18\x02 \x01(\t\x12,\n\x07message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\"5\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\tb\x06proto3')
+  serialized_pb=_b('\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\xaf\x04\n\x07Message\x12Y\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x30.com.whatsapp.proto.SenderKeyDistributionMessage\x12\x16\n\x0c\x63onversation\x18\x01 \x01(\tH\x00\x12\x39\n\rimage_message\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12=\n\x0f\x63ontact_message\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12?\n\x10location_message\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12\x37\n\x0crich_message\x18\x06 \x01(\x0b\x32\x1f.com.whatsapp.proto.RichMessageH\x00\x12?\n\x10\x64ocument_message\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x39\n\raudio_message\x18\x08 \x01(\x0b\x32 .com.whatsapp.proto.AudioMessageH\x00\x12\x39\n\rvideo_message\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x42\x06\n\x04\x62ody\"`\n\x1cSenderKeyDistributionMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\xcc\x01\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\x8a\x01\n\x0c\x41udioMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x10\n\x08\x64uration\x18\x05 \x01(\x04\x12\x0b\n\x03unk\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\"\xbf\x01\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x10\n\x08\x64uration\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0f\n\x07\x63\x61ption\x18\x07 \x01(\t\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\x8a\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\xa8\x01\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x10\n\x08mimeType\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\"\xc1\x01\n\x0bRichMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12;\n\x0freplied_message\x18\x11 \x01(\x0b\x32\".com.whatsapp.proto.RepliedMessage\"d\n\x0eRepliedMessage\x12\x12\n\nmessage_id\x18\x01 \x01(\t\x12\x10\n\x08reply_to\x18\x02 \x01(\t\x12,\n\x07message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\"5\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\tb\x06proto3')
 )
 
 
@@ -82,7 +82,14 @@ _MESSAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='video_message', full_name='com.whatsapp.proto.Message.video_message', index=7,
+      name='audio_message', full_name='com.whatsapp.proto.Message.audio_message', index=7,
+      number=8, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='video_message', full_name='com.whatsapp.proto.Message.video_message', index=8,
       number=9, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -104,7 +111,7 @@ _MESSAGE = _descriptor.Descriptor(
       index=0, containing_type=None, fields=[]),
   ],
   serialized_start=33,
-  serialized_end=533,
+  serialized_end=592,
 )
 
 
@@ -141,8 +148,8 @@ _SENDERKEYDISTRIBUTIONMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=535,
-  serialized_end=631,
+  serialized_start=594,
+  serialized_end=690,
 )
 
 
@@ -235,8 +242,81 @@ _IMAGEMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=634,
-  serialized_end=838,
+  serialized_start=693,
+  serialized_end=897,
+)
+
+
+_AUDIOMESSAGE = _descriptor.Descriptor(
+  name='AudioMessage',
+  full_name='com.whatsapp.proto.AudioMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='url', full_name='com.whatsapp.proto.AudioMessage.url', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mime_type', full_name='com.whatsapp.proto.AudioMessage.mime_type', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='file_sha256', full_name='com.whatsapp.proto.AudioMessage.file_sha256', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='file_length', full_name='com.whatsapp.proto.AudioMessage.file_length', index=3,
+      number=4, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='duration', full_name='com.whatsapp.proto.AudioMessage.duration', index=4,
+      number=5, type=4, cpp_type=4, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='unk', full_name='com.whatsapp.proto.AudioMessage.unk', index=5,
+      number=6, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='media_key', full_name='com.whatsapp.proto.AudioMessage.media_key', index=6,
+      number=7, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=900,
+  serialized_end=1038,
 )
 
 
@@ -322,8 +402,8 @@ _VIDEOMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=841,
-  serialized_end=1032,
+  serialized_start=1041,
+  serialized_end=1232,
 )
 
 
@@ -388,8 +468,8 @@ _LOCATIONMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1035,
-  serialized_end=1173,
+  serialized_start=1235,
+  serialized_end=1373,
 )
 
 
@@ -468,8 +548,8 @@ _DOCUMENTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1176,
-  serialized_end=1344,
+  serialized_start=1376,
+  serialized_end=1544,
 )
 
 
@@ -541,8 +621,8 @@ _RICHMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1347,
-  serialized_end=1540,
+  serialized_start=1547,
+  serialized_end=1740,
 )
 
 
@@ -586,8 +666,8 @@ _REPLIEDMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1542,
-  serialized_end=1642,
+  serialized_start=1742,
+  serialized_end=1842,
 )
 
 
@@ -624,8 +704,8 @@ _CONTACTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1644,
-  serialized_end=1697,
+  serialized_start=1844,
+  serialized_end=1897,
 )
 
 _MESSAGE.fields_by_name['sender_key_distribution_message'].message_type = _SENDERKEYDISTRIBUTIONMESSAGE
@@ -634,6 +714,7 @@ _MESSAGE.fields_by_name['contact_message'].message_type = _CONTACTMESSAGE
 _MESSAGE.fields_by_name['location_message'].message_type = _LOCATIONMESSAGE
 _MESSAGE.fields_by_name['rich_message'].message_type = _RICHMESSAGE
 _MESSAGE.fields_by_name['document_message'].message_type = _DOCUMENTMESSAGE
+_MESSAGE.fields_by_name['audio_message'].message_type = _AUDIOMESSAGE
 _MESSAGE.fields_by_name['video_message'].message_type = _VIDEOMESSAGE
 _MESSAGE.oneofs_by_name['body'].fields.append(
   _MESSAGE.fields_by_name['conversation'])
@@ -654,6 +735,9 @@ _MESSAGE.oneofs_by_name['body'].fields.append(
   _MESSAGE.fields_by_name['document_message'])
 _MESSAGE.fields_by_name['document_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
+  _MESSAGE.fields_by_name['audio_message'])
+_MESSAGE.fields_by_name['audio_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+_MESSAGE.oneofs_by_name['body'].fields.append(
   _MESSAGE.fields_by_name['video_message'])
 _MESSAGE.fields_by_name['video_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _RICHMESSAGE.fields_by_name['replied_message'].message_type = _REPLIEDMESSAGE
@@ -661,6 +745,7 @@ _REPLIEDMESSAGE.fields_by_name['message'].message_type = _MESSAGE
 DESCRIPTOR.message_types_by_name['Message'] = _MESSAGE
 DESCRIPTOR.message_types_by_name['SenderKeyDistributionMessage'] = _SENDERKEYDISTRIBUTIONMESSAGE
 DESCRIPTOR.message_types_by_name['ImageMessage'] = _IMAGEMESSAGE
+DESCRIPTOR.message_types_by_name['AudioMessage'] = _AUDIOMESSAGE
 DESCRIPTOR.message_types_by_name['VideoMessage'] = _VIDEOMESSAGE
 DESCRIPTOR.message_types_by_name['LocationMessage'] = _LOCATIONMESSAGE
 DESCRIPTOR.message_types_by_name['DocumentMessage'] = _DOCUMENTMESSAGE
@@ -689,6 +774,13 @@ ImageMessage = _reflection.GeneratedProtocolMessageType('ImageMessage', (_messag
   # @@protoc_insertion_point(class_scope:com.whatsapp.proto.ImageMessage)
   ))
 _sym_db.RegisterMessage(ImageMessage)
+
+AudioMessage = _reflection.GeneratedProtocolMessageType('AudioMessage', (_message.Message,), dict(
+  DESCRIPTOR = _AUDIOMESSAGE,
+  __module__ = 'wa_pb2'
+  # @@protoc_insertion_point(class_scope:com.whatsapp.proto.AudioMessage)
+  ))
+_sym_db.RegisterMessage(AudioMessage)
 
 VideoMessage = _reflection.GeneratedProtocolMessageType('VideoMessage', (_message.Message,), dict(
   DESCRIPTOR = _VIDEOMESSAGE,

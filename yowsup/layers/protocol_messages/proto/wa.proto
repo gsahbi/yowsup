@@ -11,6 +11,7 @@ message Message {
         LocationMessage location_message    = 5;
         RichMessage     rich_message        = 6;
         DocumentMessage document_message    = 7;
+        AudioMessage    audio_message       = 8;
         VideoMessage    video_message       = 9;
     }
 }
@@ -31,6 +32,16 @@ message ImageMessage {
     bytes media_key       = 8;
     bytes file_enc_sha256 = 9;
     bytes jpeg_thumbnail  = 16;
+}
+
+message AudioMessage {
+    bytes url             = 1;
+    string mime_type      = 2;
+    bytes file_sha256     = 3;
+    uint64 file_length    = 4;
+    uint64 duration       = 5;
+    uint32  unk           = 6;
+    bytes media_key       = 7;
 }
 
 message VideoMessage {
