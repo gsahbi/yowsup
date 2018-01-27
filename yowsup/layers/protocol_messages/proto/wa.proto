@@ -5,17 +5,15 @@ package com.whatsapp.proto;
 message Message {
     SenderKeyDistributionMessage sender_key_distribution_message   = 2;
     oneof body {
-        string          conversation        = 1;
-        ImageMessage    image_message       = 3;
-        ContactMessage  contact_message     = 4;
-        LocationMessage location_message    = 5;
-        ExtendedTextMessage  extended_text_message = 6;
-        DocumentMessage document_message    = 7;
-        AudioMessage    audio_message       = 8;
-        VideoMessage    video_message       = 9;
-        VideoMessage    video_message       = 9;
-        VideoMessage    video_message       = 9;
-        VideoMessage    video_message       = 9;
+        string                conversation            = 1;
+        ImageMessage          image_message           = 3;
+        ContactMessage        contact_message         = 4;
+        LocationMessage       location_message        = 5;
+        ExtendedTextMessage   extended_text_message   = 6;
+        DocumentMessage       document_message        = 7;
+        AudioMessage          audio_message           = 8;
+        VideoMessage          video_message           = 9;
+        ContactsArrayMessage  contacts_array_message  = 13;
     }
 }
 
@@ -35,6 +33,7 @@ message ImageMessage {
     bytes media_key       = 8;
     bytes file_enc_sha256 = 9;
     bytes jpeg_thumbnail  = 16;
+    ContextInfo context_info = 17;
 }
 
 message AudioMessage {
@@ -42,9 +41,11 @@ message AudioMessage {
     string mime_type      = 2;
     bytes file_sha256     = 3;
     uint64 file_length    = 4;
-    uint64 duration       = 5;
-    uint32  unk           = 6;
+    uint64 seconds        = 5;
+    uint32 ptt            = 6;
     bytes media_key       = 7;
+    bytes file_enc_sha256 = 8;
+    ContextInfo context_info = 17;
 }
 
 message VideoMessage {
@@ -59,7 +60,6 @@ message VideoMessage {
     bytes file_enc_sha256 = 11;
     bytes jpeg_thumbnail  = 16;
     ContextInfo context_info = 17;
-    bytes streaming_sidecar = 18;
 }
 
 message LocationMessage {
@@ -69,7 +69,7 @@ message LocationMessage {
     string address            = 4;
     string url                = 5;
     bytes  jpeg_thumbnail     = 16;
-
+    ContextInfo context_info  = 17;
 }
 message DocumentMessage {
     string url            = 1;
@@ -79,7 +79,10 @@ message DocumentMessage {
     uint64 file_length    = 5;
     uint32 page_count     = 6;
     bytes media_key       = 7;
+    bytes file_name       = 8;
+    bytes file_enc_sha256 = 9;
     bytes jpeg_thumbnail  = 16;
+    ContextInfo context_info  = 17;
 }
 
 
@@ -96,12 +99,21 @@ message ExtendedTextMessage {
 message ContextInfo {
     string stanza_id = 1;
     string participant = 2;
-    Message quoted_message_ = 3;
+    Message quoted_message = 3;
     string remote_jid = 4;
-    string mentioned_jid = 15;
+    repeated string mentioned_jid = 15;
+
 }
 
 message ContactMessage {
     string display_name = 1;
     string vcard = 16;
+    ContextInfo context_info  = 17;
+
+}
+
+message ContactsArrayMessage {
+    string display_name = 1;
+    repeated ContactMessage contact = 2;
+    ContextInfo context_info = 17;
 }
