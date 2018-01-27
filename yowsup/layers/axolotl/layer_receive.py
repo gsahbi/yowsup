@@ -241,31 +241,27 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             axolotlAddress = AxolotlAddress(encMessageProtocolEntity.getParticipant(False), 0)
             self.handleSenderKeyDistributionMessage(m.sender_key_distribution_message, axolotlAddress)
 
-        if m.HasField("conversation"):
-            handled = True
-            self.handleConversationMessage(node, m.conversation)
-        elif m.HasField("contact_message"):
-            handled = True
-            self.handleContactMessage(node, m.contact_message)
-        elif m.HasField("url_message"):
-            handled = True
-            self.handleUrlMessage(node, m.url_message)
-        elif m.HasField("location_message"):
-            handled = True
-            self.handleLocationMessage(node, m.location_message)
-        elif m.HasField("image_message"):
-            handled = True
-            self.handleImageMessage(node, m.image_message)
-        elif m.HasField("video_message"):
-            handled = True
-            self.handleVideoMessage(node, m.video_message)
-        elif m.HasField("audio_message"):
-            self.handleAudioMessage(node, m.audio_message)
-        elif m.HasField("document_message"):
-            handled = True
-            self.handleDocumentMessage(node, m.document_message)
-        elif not handled:
+        body = m.WhichOneof("body")
+
+        if body is None and not handled:
             raise ValueError("Unhandled")
+
+        if body == "conversation":
+            self.handleConversationMessage(node, m.conversation)
+        elif body == "contact_message":
+            self.handleContactMessage(node, m.contact_message)
+        elif body == "rich_message":
+            self.handleRichMessage(node, m.rich_message)
+        elif body == "location_message":
+            self.handleLocationMessage(node, m.location_message)
+        elif body == "image_message":
+            self.handleImageMessage(node, m.image_message)
+        elif body == "video_message":
+            self.handleVideoMessage(node, m.video_message)
+        elif body == "audio_message":
+            self.handleAudioMessage(node, m.audio_message)
+        elif body == "document_message":
+            self.handleDocumentMessage(node, m.document_message)
 
     def handleSenderKeyDistributionMessage(self, senderKeyDistributionMessage, axolotlAddress):
         groupId = senderKeyDistributionMessage.groupId
@@ -277,7 +273,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
     def handleConversationMessage(self, originalEncNode, text):
         messageNode = copy.deepcopy(originalEncNode)
         messageNode.children = []
-        messageNode.addChild(ProtocolTreeNode("body", data = text))
+        messageNode.addChild(ProtocolTreeNode("body", data=text))
         self.toUpper(messageNode)
 
     def handleImageMessage(self, originalEncNode, imageMessage):
@@ -314,7 +310,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             "duration": str(videoMessage.duration),
             "seconds": str(videoMessage.duration),
             "caption": videoMessage.caption,
-            "encoding": "raw",
+            # "encoding": "raw",  # TODO Duplicate assignment
             "file": "enc",
             "ip": "0",
             "mediakey": videoMessage.media_key
@@ -335,7 +331,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             "encoding": audioMessage.mime_type.split(';')[1].strip() if len(audioMessage.mime_type.split(';')) > 1 else "",
             "duration": str(audioMessage.duration),
             "seconds": str(audioMessage.duration),
-            "encoding": "raw",
+            # "encoding": "raw",  # TODO Duplicate assignment
             "file": "enc",
             "ip": "0",
             "mediakey": audioMessage.media_key
@@ -345,11 +341,30 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         self.toUpper(messageNode)
 
     # TODO: Create own URLNode
-    def handleUrlMessage(self, originalEncNode, urlMessage):
+    def handleRichMessage(self, originalEncNode, richMessage):
         messageNode = copy.deepcopy(originalEncNode)
         messageNode["type"] = "text"
         messageNode.children = []
-        messageNode.addChild(ProtocolTreeNode("body", data = urlMessage.text))
+        replied_message = None
+        if richMessage.HasField("replied_message"):
+            replied_message = {
+                "message_id": richMessage.replied_message.message_id,
+                "reply_to": richMessage.replied_message.reply_to
+                # TODO  handle recursive call, is it worth the effort !
+                # "message": richMessage.replied_message.message_id,
+            }
+
+
+        richNode = ProtocolTreeNode("body", {
+            "matched_text": richMessage.matched_text,
+            "canonical_url": richMessage.canonical_url,
+            "description": richMessage.description,
+            "title": richMessage.title,
+            "jpeg_thumbnail": richMessage.jpeg_thumbnail,
+            "replied_message": replied_message
+        }, data=richMessage.text)
+
+        messageNode.addChild(richNode)
         self.toUpper(messageNode)
 
     def handleDocumentMessage(self, originalEncNode, documentMessage):

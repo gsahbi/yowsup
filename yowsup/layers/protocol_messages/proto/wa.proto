@@ -1,78 +1,88 @@
+syntax = "proto3";
+
 package com.whatsapp.proto;
 
 message Message {
-  optional string conversation                   = 1;
-  optional SenderKeyDistributionMessage sender_key_distribution_message   = 2;
-  optional ImageMessage image_message            = 3;
-  optional ContactMessage contact_message        = 4;
-  optional LocationMessage location_message      = 5;
-  optional DocumentMessage document_message      = 7;
-  optional UrlMessage url_message                = 6;
-  optional VideoMessage video_message            = 9;
+    SenderKeyDistributionMessage sender_key_distribution_message   = 2;
+    oneof body {
+        string          conversation        = 1;
+        ImageMessage    image_message       = 3;
+        ContactMessage  contact_message     = 4;
+        LocationMessage location_message    = 5;
+        RichMessage     rich_message        = 6;
+        DocumentMessage document_message    = 7;
+        VideoMessage    video_message       = 9;
+    }
 }
 
 message SenderKeyDistributionMessage {
-  required string groupId = 1;
-  required bytes axolotl_sender_key_distribution_message = 2;
+    string groupId = 1;
+    bytes axolotl_sender_key_distribution_message = 2;
 }
 
 message ImageMessage {
-  required bytes url            = 1;
-  required string mime_type       = 2;
-  required string caption        = 3;
-  required bytes file_sha256     = 4;
-  required uint64 file_length    = 5;
-  required uint32 height        = 6;
-  required uint32 width         = 7;
-  required bytes media_key       = 8;
-  required bytes file_enc_sha256       = 9;
-  required bytes jpeg_thumbnail  = 16;
+    bytes url             = 1;
+    string mime_type      = 2;
+    string caption        = 3;
+    bytes file_sha256     = 4;
+    uint64 file_length    = 5;
+    uint32 height         = 6;
+    uint32 width          = 7;
+    bytes media_key       = 8;
+    bytes file_enc_sha256 = 9;
+    bytes jpeg_thumbnail  = 16;
 }
 
 message VideoMessage {
-     required bytes url             =  1;
-     required string mime_type      =  2;
-     required bytes file_sha256     =  3;
-     required uint64 file_length    =  4;
-     required uint64 duration       =  5;
-     required bytes media_key       =  6;
-     required string caption        =  7;
-     required bytes file_enc_sha256 = 8;
-     required bytes jpeg_thumbnail  = 16;
+    bytes url             = 1;
+    string mime_type      = 2;
+    bytes file_sha256     = 3;
+    uint64 file_length    = 4;
+    uint64 duration       = 5;
+    bytes media_key       = 6;
+    string caption        = 7;
+    bytes file_enc_sha256 = 8;
+    bytes jpeg_thumbnail  = 16;
 }
 
 message LocationMessage {
-  required double degrees_latitude   = 1;
-  required double degrees_longitude  = 2;
-  optional string name               = 3;
-  optional string address            = 4;
-  optional string url                = 5;
-  required bytes  jpeg_thumbnail     = 16;
+    double degrees_latitude   = 1;
+    double degrees_longitude  = 2;
+    string name               = 3;
+    string address            = 4;
+    string url                = 5;
+    bytes  jpeg_thumbnail     = 16;
 
 }
 message DocumentMessage {
-  required string url = 1;
-  required string mimeType = 2;
-  required string title = 3;
-  required bytes file_sha256 = 4;
-  required uint64 file_length = 5;
-  required uint32 page_count = 6;
-  required bytes media_key = 7;
-  optional bytes jpeg_thumbnail = 16;
+    string url = 1;
+    string mimeType = 2;
+    string title = 3;
+    bytes file_sha256 = 4;
+    uint64 file_length = 5;
+    uint32 page_count = 6;
+    bytes media_key = 7;
+    bytes jpeg_thumbnail = 16;
 }
 
 
-message UrlMessage {
-  required string text = 1;
-  required string matched_text = 2;
-  required string canonical_url = 4;
-  required string description = 5;
-  required string title = 6;
-  required string jpeg_thumbnail = 16;
+message RichMessage {
+    string text = 1;
+    string matched_text = 2;
+    string canonical_url = 4;
+    string description = 5;
+    string title = 6;
+    bytes jpeg_thumbnail = 16;
+    RepliedMessage replied_message = 17;
 }
 
+message RepliedMessage {
+    string message_id = 1;
+    string reply_to = 2;
+    Message message = 3;
+}
 
 message ContactMessage {
-  required string display_name = 1;
-  required string vcard = 16;
+    string display_name = 1;
+    string vcard = 16;
 }
