@@ -223,7 +223,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             pass
 
         if "YOWSUP_PROTOBUF_DEBUG" in os.environ:
-            from yowsup.layers.protocol_messages.protobuf_inspect.types import StandardParser
+            from yowsup.common.protobuf_inspect import StandardParser
             parser = StandardParser()
             parser.types["root"] = {}
             parser.types["root"]["compact"] = False
