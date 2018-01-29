@@ -1,23 +1,21 @@
-import sys, tempfile, logging
-logger = logging.getLogger(__name__)
+import logging
+import sys
+import tempfile
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
-if sys.version_info >= (3, 0):
-    from urllib.request import urlopen
-    from urllib.parse import urlencode
-else:
-    from urllib2 import urlopen
-    from urllib import urlencode
+logger = logging.getLogger(__name__)
 
 
 class MediaDownloader:
-    def __init__(self, successClbk = None, errorClbk = None, progressCallback = None):
+    def __init__(self, successClbk=None, errorClbk=None, progressCallback=None):
         self.successCallback = successClbk
         self.errorCallback = errorClbk
         self.progressCallback = progressCallback
 
-    def download(self, url = ""):
+    def download(self, url=""):
         try:
-            
+
             if not url:
                 if self.url:
                     url = "https://" if self.port == 443 else "http://"
@@ -26,9 +24,9 @@ class MediaDownloader:
                     logger.debug("URL is %s" % url)
                 else:
                     raise Exception("No url specified for fetching")
-            
+
             u = urlopen(url)
-            
+
             path = tempfile.mkstemp()[1]
             with open(path, "wb") as f:
                 meta = u.info()

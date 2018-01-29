@@ -1,10 +1,13 @@
-from .message_text import TextMessageProtocolEntity
-from yowsup.structs import ProtocolTreeNode
 import time
+
+from yowsup.structs import ProtocolTreeNode
+from .message_text import TextMessageProtocolEntity
+
+
 class BroadcastTextMessage(TextMessageProtocolEntity):
     def __init__(self, jids, body):
         broadcastTime = int(time.time() * 1000)
-        super(BroadcastTextMessage, self).__init__(body, to = "%s@broadcast" % broadcastTime)
+        super(BroadcastTextMessage, self).__init__(body, to="%s@broadcast" % broadcastTime)
         self.setBroadcastProps(jids)
 
     def setBroadcastProps(self, jids):
@@ -14,7 +17,7 @@ class BroadcastTextMessage(TextMessageProtocolEntity):
     def toProtocolTreeNode(self):
         node = super(BroadcastTextMessage, self).toProtocolTreeNode()
         toNodes = [ProtocolTreeNode("to", {"jid": jid}) for jid in self.jids]
-        broadcastNode = ProtocolTreeNode("broadcast", children = toNodes)
+        broadcastNode = ProtocolTreeNode("broadcast", children=toNodes)
         node.addChild(broadcastNode)
         return node
 

@@ -1,23 +1,29 @@
+import base64
+import binascii
+import hashlib
+import hmac
+import logging
+import mimetypes
+import os
+import socket
+import sys
+import threading
+
+import requests
+from Crypto.Cipher import AES
+from axolotl.kdf.hkdfv3 import HKDFv3
+from axolotl.util.byteutil import ByteUtil
+
 from yowsup.common.http.warequest import WARequest
 from yowsup.common.http.waresponseparser import JSONResponseParser
-import socket, ssl, os, hashlib, sys
-from time import sleep
-import threading
-import logging
-import requests
-from yowsup.common.tools import MimeTools
-import base64
-import hmac
-from Crypto.Cipher import AES
-import binascii
-from axolotl.kdf.hkdfv3 import HKDFv3
-from axolotl.sessioncipher import pad
-from axolotl.util.byteutil import ByteUtil
-from .protocolentities.message_media_downloadable import DownloadableMediaMessageProtocolEntity
+from .protocolentities.message_downloadable import DownloadableMessageProtocolEntity
+
 logger = logging.getLogger(__name__)
 
+
 class MediaUploader(WARequest, threading.Thread):
-    def __init__(self, jid, accountJid, sourcePath, uploadUrl, resumeOffset = 0, successClbk = None, errorClbk = None, progressCallback = None, async = True):
+    def __init__(self, jid, accountJid, sourcePath, uploadUrl, resumeOffset=0, successClbk=None, errorClbk=None,
+                 progressCallback=None, async=True):
         WARequest.__init__(self)
 
         self.async = async
@@ -44,7 +50,7 @@ class MediaUploader(WARequest, threading.Thread):
         else:
             self.run()
 
-    def pad(self,s):
+    def pad(self, s):
         # return s + (16 - len(s) % 16) * chr(16 - len(s) % 16)
         y = (16 - len(s) % 16) * chr(16 - len(s) % 16)
         a = s + y.encode()
@@ -52,29 +58,27 @@ class MediaUploader(WARequest, threading.Thread):
 
     def getKey(self, filetype):
         if "video" in filetype:
-            return DownloadableMediaMessageProtocolEntity.VIDEO_KEY
+            return DownloadableMessageProtocolEntity.VIDEO_KEY
         elif "image" in filetype:
-            return DownloadableMediaMessageProtocolEntity.IMAGE_KEY
+            return DownloadableMessageProtocolEntity.IMAGE_KEY
         elif "audio" in filetype:
-            return DownloadableMediaMessageProtocolEntity.AUDIO_KEY
+            return DownloadableMessageProtocolEntity.AUDIO_KEY
         elif "application" in filetype:
-            return DownloadableMediaMessageProtocolEntity.DOCUMENT_KEY
+            return DownloadableMessageProtocolEntity.DOCUMENT_KEY
         elif "text" in filetype:
-            return DownloadableMediaMessageProtocolEntity.DOCUMENT_KEY
-        raise Exception ("FILE TYPE NOT SUPPORTED")
+            return DownloadableMessageProtocolEntity.DOCUMENT_KEY
+        raise Exception("FILE TYPE NOT SUPPORTED")
 
-
-
-    def encryptMedia(self,img, refkey,filetype):
+    def encryptMedia(self, img, refkey, filetype):
         key = self.getKey(filetype)
         derivative = HKDFv3().deriveSecrets(binascii.unhexlify(refkey),
                                             binascii.unhexlify(key), 112)
         parts = ByteUtil.split(derivative, 16, 32)
         iv = parts[0]
         cipherKey = parts[1]
-        macKey=derivative[48:80]
+        macKey = derivative[48:80]
 
-        mac = hmac.new(macKey,digestmod=hashlib.sha256)
+        mac = hmac.new(macKey, digestmod=hashlib.sha256)
         mac.update(iv)
 
         cipher = AES.new(key=cipherKey, mode=AES.MODE_CBC, IV=iv)
@@ -84,7 +88,7 @@ class MediaUploader(WARequest, threading.Thread):
         hash = mac.digest()
         hashKey = ByteUtil.trim(mac.digest(), 10)
 
-        finalEnc =  imgEnc + hashKey
+        finalEnc = imgEnc + hashKey
 
         return finalEnc
 
@@ -95,19 +99,19 @@ class MediaUploader(WARequest, threading.Thread):
 
         try:
             filename = os.path.basename(sourcePath)
-            filetype = MimeTools.getMIME(filename)
+            filetype = mimetypes.guess_type(filename)
             f = open(sourcePath, 'rb')
             stream = f.read()
             f.close()
             refkey = binascii.hexlify(os.urandom(32))
-            stream=self.encryptMedia(stream,refkey,filetype)
-            fenc = open(sourcePath+".enc", 'wb')  # bahtiar
+            stream = self.encryptMedia(stream, refkey, filetype)
+            fenc = open(sourcePath + ".enc", 'wb')  # bahtiar
             fenc.write(stream)
             fenc.seek(0, 2)
-            filesize=fenc.tell()
+            filesize = fenc.tell()
             fenc.close()
-            os.remove(sourcePath+".enc")
-            filesize2=len(stream)
+            os.remove(sourcePath + ".enc")
+            filesize2 = len(stream)
 
             sha1 = hashlib.sha256()
             sha1.update(stream)
@@ -155,7 +159,7 @@ class MediaUploader(WARequest, threading.Thread):
             result = None
 
             if response.text.startswith("{"):
-               result = self.parser.parse(response.text, self.pvars)
+                result = self.parser.parse(response.text, self.pvars)
 
             if not result:
                 raise Exception("json data not found")
@@ -163,8 +167,8 @@ class MediaUploader(WARequest, threading.Thread):
             if result["url"] is not None:
                 if self.successCallback:
                     # self.successCallback(sourcePath, self.jid, result["url"])
-                    result["mediaKey"]=refkey
-                    result["file_enc_sha256"]=file_enc_sha256
+                    result["mediaKey"] = refkey
+                    result["file_enc_sha256"] = file_enc_sha256
                     self.successCallback(sourcePath, self.jid, result)
             else:
                 logger.exception("uploadUrl: %s, result of uploading media has no url" % uploadUrl)
@@ -172,6 +176,6 @@ class MediaUploader(WARequest, threading.Thread):
                     self.errorCallback(sourcePath, self.jid, uploadUrl)
 
         except:
-            logger.exception("Error occured at transfer %s"%sys.exc_info()[1])
+            logger.exception("Error occured at transfer %s" % sys.exc_info()[1])
             if self.errorCallback:
                 self.errorCallback(sourcePath, self.jid, uploadUrl)

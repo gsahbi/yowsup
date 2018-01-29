@@ -1,11 +1,12 @@
-import unittest
 import inspect
 import threading
+import unittest
 
 try:
     import Queue
 except ImportError:
     import queue as Queue
+
 
 class YowLayerEvent:
     def __init__(self, name, **kwargs):
@@ -24,7 +25,8 @@ class YowLayerEvent:
 
     def getArg(self, name):
         return self.args[name] if name in self.args else None
-    
+
+
 class EventCallback(object):
     def __init__(self, eventName):
         self.eventName = eventName
@@ -39,6 +41,7 @@ class YowLayer(object):
     __lower = None
     _props = {}
     __detachedQueue = Queue.Queue()
+
     # def __init__(self, upperLayer, lowerLayer):
     #     self.setLayers(upperLayer, lowerLayer)
 
@@ -55,7 +58,7 @@ class YowLayer(object):
                 fn = m[1]
                 self.event_callbacks[fn.event_callback] = getattr(self, fname)
 
-    def getLayerInterface(self, YowLayerClass = None):
+    def getLayerInterface(self, YowLayerClass=None):
         return self.interface if YowLayerClass is None else self.__stack.getLayerInterface(YowLayerClass)
 
     def setStack(self, stack):
@@ -88,28 +91,28 @@ class YowLayer(object):
         if self.__upper and not self.__upper.onEvent(yowLayerEvent):
             if yowLayerEvent.isDetached():
                 yowLayerEvent.detached = False
-                self.getStack().execDetached(lambda :  self.__upper.emitEvent(yowLayerEvent))
+                self.getStack().execDetached(lambda: self.__upper.emitEvent(yowLayerEvent))
 
             else:
                 self.__upper.emitEvent(yowLayerEvent)
-
 
     def broadcastEvent(self, yowLayerEvent):
         if self.__lower and not self.__lower.onEvent(yowLayerEvent):
             if yowLayerEvent.isDetached():
                 yowLayerEvent.detached = False
-                self.getStack().execDetached(lambda:self.__lower.broadcastEvent(yowLayerEvent))
+                self.getStack().execDetached(lambda: self.__lower.broadcastEvent(yowLayerEvent))
             else:
                 self.__lower.broadcastEvent(yowLayerEvent)
 
     '''return true to stop propagating the event'''
+
     def onEvent(self, yowLayerEvent):
         eventName = yowLayerEvent.getName()
         if eventName in self.event_callbacks:
             return self.event_callbacks[eventName](yowLayerEvent)
         return False
 
-    def getProp(self, key, default = None):
+    def getProp(self, key, default=None):
         return self.getStack().getProp(key, default)
 
     def setProp(self, key, val):
@@ -117,7 +120,7 @@ class YowLayer(object):
 
 
 class YowProtocolLayer(YowLayer):
-    def __init__(self, handleMap = None):
+    def __init__(self, handleMap=None):
         super(YowProtocolLayer, self).__init__()
         self.handleMap = handleMap or {}
         self.iqRegistry = {}
@@ -136,7 +139,7 @@ class YowProtocolLayer(YowLayer):
                 send(entity)
 
     def entityToLower(self, entity):
-        #super(YowProtocolLayer, self).toLower(entity.toProtocolTreeNode())
+        # super(YowProtocolLayer, self).toLower(entity.toProtocolTreeNode())
         self.toLower(entity.toProtocolTreeNode())
 
     def isGroupJid(self, jid):
@@ -145,8 +148,7 @@ class YowProtocolLayer(YowLayer):
     def raiseErrorForNode(self, node):
         raise ValueError("Unimplemented notification type %s " % node)
 
-
-    def _sendIq(self, iqEntity, onSuccess = None, onError = None):
+    def _sendIq(self, iqEntity, onSuccess=None, onError=None):
         self.iqRegistry[iqEntity.getId()] = (iqEntity, onSuccess, onError)
         self.toLower(iqEntity.toProtocolTreeNode())
 
@@ -165,18 +167,18 @@ class YowProtocolLayer(YowLayer):
 
         return False
 
+
 class YowParallelLayer(YowLayer):
-    def __init__(self, sublayers = None):
+    def __init__(self, sublayers=None):
         super(YowParallelLayer, self).__init__()
         self.sublayers = sublayers or []
         self.sublayers = tuple([sublayer() for sublayer in sublayers])
         for s in self.sublayers:
-            #s.setLayers(self, self)
+            # s.setLayers(self, self)
             s.toLower = self.toLower
             s.toUpper = self.toUpper
             s.broadcastEvent = self.subBroadcastEvent
             s.emitEvent = self.subEmitEvent
-
 
     def getLayerInterface(self, YowLayerClass):
         for s in self.sublayers:
@@ -187,7 +189,6 @@ class YowParallelLayer(YowLayer):
         super(YowParallelLayer, self).setStack(stack)
         for s in self.sublayers:
             s.setStack(self.getStack())
-
 
     def receive(self, data):
         for s in self.sublayers:
@@ -205,7 +206,6 @@ class YowParallelLayer(YowLayer):
         self.onEvent(yowLayerEvent)
         self.emitEvent(yowLayerEvent)
 
-
     def onEvent(self, yowLayerEvent):
         stopEvent = False
         for s in self.sublayers:
@@ -215,6 +215,7 @@ class YowParallelLayer(YowLayer):
 
     def __str__(self):
         return " - ".join([l.__str__() for l in self.sublayers])
+
 
 class YowLayerInterface(object):
     def __init__(self, layer):
@@ -238,26 +239,27 @@ class YowLayerTest(unittest.TestCase):
 
     def sendOverrider(self, data):
         self.lowerSink.append(data)
-        
+
     def emitEventOverrider(self, event):
         self.upperEventSink.append(event)
-    
+
     def broadcastEventOverrider(self, event):
         self.lowerEventSink.append(event)
-        
+
     def assert_emitEvent(self, event):
         self.emitEvent(event)
         try:
             self.assertEqual(event, self.upperEventSink.pop())
         except IndexError:
             raise AssertionError("Event '%s' was not emited through this layer" % (event.getName()))
-        
+
     def assert_broadcastEvent(self, event):
         self.broadcastEvent(event)
         try:
             self.assertEqual(event, self.lowerEventSink.pop())
         except IndexError:
             raise AssertionError("Event '%s' was not broadcasted through this layer" % (event.getName()))
+
 
 class YowProtocolLayerTest(YowLayerTest):
     def assertSent(self, entity):

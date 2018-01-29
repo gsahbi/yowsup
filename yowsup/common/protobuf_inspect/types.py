@@ -1,7 +1,8 @@
-from .core import read_varint, read_value
-from .parser import Parser, fg, dim, bold
-from struct import unpack
 from io import BytesIO
+from struct import unpack
+
+from .core import read_varint, read_value
+from .parser import Parser, fg
 
 
 # Code that implements and registers the usual native types (high
@@ -131,11 +132,18 @@ class StandardParser(Parser):
 
         # Attempt to decode as UTF-8
         try:
-            if self.is_probable_string(chunk.decode("utf-8")):
-                return self.parse_string(BytesIO(chunk), "string")
+            chunk.decode("utf-8")
+            return self.parse_string(BytesIO(chunk), "string")
         except UnicodeError as e:
             pass
 
+        # Attempt to decode as ASCII
+        try:
+            chunk.decode("ascii")
+            # if self.is_probable_string(utfstr):
+            #     return self.parse_string(BytesIO(chunk), "string")
+        except UnicodeError as e:
+            pass
         # Fall back to hexdump
         return self.parse_bytes(BytesIO(chunk), "bytes")
 

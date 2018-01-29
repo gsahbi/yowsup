@@ -1,26 +1,27 @@
-from .cli import Cli, clicmd
-from yowsup.layers.interface import YowInterfaceLayer, ProtocolEntityCallback
-from yowsup.layers.auth import YowAuthenticationProtocolLayer
-from yowsup.layers import YowLayerEvent, EventCallback
-from yowsup.layers.network import YowNetworkLayer
-import sys
-from yowsup.common import YowConstants
 import datetime
-import os
 import logging
-from yowsup.layers.protocol_groups.protocolentities      import *
-from yowsup.layers.protocol_presence.protocolentities    import *
-from yowsup.layers.protocol_messages.protocolentities    import *
-from yowsup.layers.protocol_ib.protocolentities          import *
-from yowsup.layers.protocol_iq.protocolentities          import *
-from yowsup.layers.protocol_contacts.protocolentities    import *
-from yowsup.layers.protocol_chatstate.protocolentities   import *
-from yowsup.layers.protocol_privacy.protocolentities     import *
-from yowsup.layers.protocol_media.protocolentities       import *
-from yowsup.layers.protocol_media.mediauploader import MediaUploader
-from yowsup.layers.protocol_profiles.protocolentities    import *
-from yowsup.common.tools import Jid
+import os
+import sys
+
+from yowsup.common import YowConstants
 from yowsup.common.optionalmodules import PILOptionalModule, AxolotlOptionalModule
+from yowsup.common.tools import Jid
+from yowsup.layers import YowLayerEvent, EventCallback
+from yowsup.layers.auth import YowAuthenticationProtocolLayer
+from yowsup.layers.interface import YowInterfaceLayer, ProtocolEntityCallback
+from yowsup.layers.network import YowNetworkLayer
+from yowsup.layers.protocol_chatstate.protocolentities import *
+from yowsup.layers.protocol_contacts.protocolentities import *
+from yowsup.layers.protocol_groups.protocolentities import *
+from yowsup.layers.protocol_ib.protocolentities import *
+from yowsup.layers.protocol_iq.protocolentities import *
+from yowsup.layers.protocol_messages.mediauploader import MediaUploader
+from yowsup.layers.protocol_messages.protocolentities import *
+from yowsup.layers.protocol_presence.protocolentities import *
+from yowsup.layers.protocol_privacy.protocolentities import *
+from yowsup.layers.protocol_profiles.protocolentities import *
+from .cli import Cli, clicmd
+
 logger = logging.getLogger(__name__)
 
 class YowsupCliLayer(Cli, YowInterfaceLayer):
@@ -388,13 +389,13 @@ class YowsupCliLayer(Cli, YowInterfaceLayer):
     def vcard(self, number, vcardName, contactName, contactNumber):
         vcard = "BEGIN:VCARD\nVERSION:3.0\nN:;%s;;;\nFN:%s\nitem1.TEL;waid=%s:+%s\nitem1.X-ABLabel:Celular\nEND:VCARD" % (contactName, contactName, str(contactNumber), str(contactNumber))
         vcard = bytes(vcard, "utf-8")
-        vcardEntity = VCardMediaMessageProtocolEntity(name=vcardName, card_data=vcard, to="%s@s.whatsapp.net" % number)
+        vcardEntity = LocationMessageProtocolEntity(name=vcardName, card_data=vcard, to="%s@s.whatsapp.net" % number)
         self.toLower(vcardEntity)
 
     @clicmd("Send a location with optional params", 0)
     def location(self, number, latitude, longitude, name=None, address=None, url=None):
-        locationEntity = LocationMediaMessageProtocolEntity(latitude, longitude, name=name, address=address, url=url,
-                                                            to="%s@s.whatsapp.net" % number)
+        locationEntity = LocationMessageProtocolEntity(latitude, longitude, name=name, address=address, url=url,
+                                                       to="%s@s.whatsapp.net" % number)
         self.toLower(locationEntity)
 
     @clicmd("Send a video with optional caption")
@@ -552,13 +553,13 @@ class YowsupCliLayer(Cli, YowInterfaceLayer):
 
     def doSendMedia(self, mediaType, filePath, url, to, ip = None, caption = None):
         if mediaType == RequestUploadIqProtocolEntity.MEDIA_TYPE_IMAGE:
-        	entity = ImageDownloadableMediaMessageProtocolEntity.fromFilePath(filePath, url, ip, to, caption = caption)
+            entity = ImageMessageProtocolEntity.fromFilePath(filePath, url, ip, to, caption=caption)
         elif mediaType == RequestUploadIqProtocolEntity.MEDIA_TYPE_AUDIO:
-        	entity = AudioDownloadableMediaMessageProtocolEntity.fromFilePath(filePath, url, ip, to)
+            entity = AudioMessageProtocolEntity.fromFilePath(filePath, url, ip, to)
         elif mediaType == RequestUploadIqProtocolEntity.MEDIA_TYPE_VIDEO:
-        	entity = VideoDownloadableMediaMessageProtocolEntity.fromFilePath(filePath, url, ip, to, caption = caption)
+            entity = VideoMessageProtocolEntity.fromFilePath(filePath, url, ip, to, caption=caption)
         elif mediaType == RequestUploadIqProtocolEntity.MEDIA_TYPE_DOCUMENT:
-            entity = DocumentDownloadableMediaMessageProtocolEntity.fromFilePath(filePath, url, ip, to)
+            entity = DocumentMessageProtocolEntity.fromFilePath(filePath, url, ip, to)
         self.toLower(entity)
 
     def __str__(self):

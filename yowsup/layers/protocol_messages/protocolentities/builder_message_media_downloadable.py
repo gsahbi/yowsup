@@ -1,6 +1,4 @@
 # from yowsup.layers.protocol_media import mediacipher
-import tempfile
-import os
 class DownloadableMediaMessageBuilder(object):
     def __init__(self, downloadbleMediaMessageClass, jid, filepath):
         self.jid = jid
@@ -9,7 +7,7 @@ class DownloadableMediaMessageBuilder(object):
         self.cls = downloadbleMediaMessageClass
         self.mediaKey = None
         self.attributes = {}
-        self.mediaType = self.cls.__name__.split("DownloadableMediaMessageProtocolEntity")[0].lower() #ugly ?
+        self.mediaType = self.cls.__name__.split("DownloadableMessageProtocolEntity")[0].lower()  # ugly ?
 
     # def encrypt(self):
     #     fd, encpath = tempfile.mkstemp()

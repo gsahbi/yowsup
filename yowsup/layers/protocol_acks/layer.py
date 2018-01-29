@@ -1,5 +1,7 @@
 from yowsup.layers import YowProtocolLayer
-from .protocolentities import * 
+from .protocolentities import *
+
+
 class YowAckProtocolLayer(YowProtocolLayer):
     def __init__(self):
         handleMap = {

@@ -8,7 +8,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 
 # @@protoc_insertion_point(imports)
 
@@ -19,8 +18,11 @@ DESCRIPTOR = _descriptor.FileDescriptor(
     package='com.whatsapp.proto',
     syntax='proto3',
     serialized_pb=_b(
-        '\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\x8c\x05\n\x07Message\x12Y\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x30.com.whatsapp.proto.SenderKeyDistributionMessage\x12\x16\n\x0c\x63onversation\x18\x01 \x01(\tH\x00\x12\x39\n\rimage_message\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12=\n\x0f\x63ontact_message\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12?\n\x10location_message\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12H\n\x15\x65xtended_text_message\x18\x06 \x01(\x0b\x32\'.com.whatsapp.proto.ExtendedTextMessageH\x00\x12?\n\x10\x64ocument_message\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x39\n\raudio_message\x18\x08 \x01(\x0b\x32 .com.whatsapp.proto.AudioMessageH\x00\x12\x39\n\rvideo_message\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x12J\n\x16\x63ontacts_array_message\x18\r \x01(\x0b\x32(.com.whatsapp.proto.ContactsArrayMessageH\x00\x42\x06\n\x04\x62ody\"`\n\x1cSenderKeyDistributionMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\x83\x02\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xd9\x01\n\x0c\x41udioMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x0b\n\x03ptt\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x83\x02\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0e\n\x06height\x18\t \x01(\r\x12\r\n\x05width\x18\n \x01(\r\x12\x17\n\x0f\x66ile_enc_sha256\x18\x0b \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc1\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x8b\x02\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x10\n\x08mimeType\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x11\n\tfile_name\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc3\x01\n\x13\x45xtendedTextMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x95\x01\n\x0b\x43ontextInfo\x12\x11\n\tstanza_id\x18\x01 \x01(\t\x12\x13\n\x0bparticipant\x18\x02 \x01(\t\x12\x33\n\x0equoted_message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\x12\x12\n\nremote_jid\x18\x04 \x01(\t\x12\x15\n\rmentioned_jid\x18\x0f \x03(\t\"l\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\t\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x98\x01\n\x14\x43ontactsArrayMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x33\n\x07\x63ontact\x18\x02 \x03(\x0b\x32\".com.whatsapp.proto.ContactMessage\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfob\x06proto3')
+        '\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\xc3\x04\n\x07Message\x12Y\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x30.com.whatsapp.proto.SenderKeyDistributionMessage\x12\x0e\n\x04text\x18\x01 \x01(\tH\x00\x12\x31\n\x05image\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12\x35\n\x07\x63ontact\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12\x37\n\x08location\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12@\n\rextended_text\x18\x06 \x01(\x0b\x32\'.com.whatsapp.proto.ExtendedTextMessageH\x00\x12\x37\n\x08\x64ocument\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x31\n\x05\x61udio\x18\x08 \x01(\x0b\x32 .com.whatsapp.proto.AudioMessageH\x00\x12\x31\n\x05video\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x12\x41\n\rcontact_array\x18\r \x01(\x0b\x32(.com.whatsapp.proto.ContactsArrayMessageH\x00\x42\x06\n\x04\x62ody\"`\n\x1cSenderKeyDistributionMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\x83\x02\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xd9\x01\n\x0c\x41udioMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x0b\n\x03ptt\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x83\x02\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0e\n\x06height\x18\t \x01(\r\x12\r\n\x05width\x18\n \x01(\r\x12\x17\n\x0f\x66ile_enc_sha256\x18\x0b \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc1\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x8b\x02\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x10\n\x08mimeType\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x11\n\tfile_name\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc3\x01\n\x13\x45xtendedTextMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x95\x01\n\x0b\x43ontextInfo\x12\x11\n\tstanza_id\x18\x01 \x01(\t\x12\x13\n\x0bparticipant\x18\x02 \x01(\t\x12\x33\n\x0equoted_message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\x12\x12\n\nremote_jid\x18\x04 \x01(\t\x12\x15\n\rmentioned_jid\x18\x0f \x03(\t\"l\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\t\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x98\x01\n\x14\x43ontactsArrayMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x33\n\x07\x63ontact\x18\x02 \x03(\x0b\x32\".com.whatsapp.proto.ContactMessage\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfob\x06proto3')
 )
+
+
+
 
 _MESSAGE = _descriptor.Descriptor(
     name='Message',
@@ -38,63 +40,63 @@ _MESSAGE = _descriptor.Descriptor(
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='conversation', full_name='com.whatsapp.proto.Message.conversation', index=1,
+            name='text', full_name='com.whatsapp.proto.Message.text', index=1,
             number=1, type=9, cpp_type=9, label=1,
             has_default_value=False, default_value=_b("").decode('utf-8'),
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='image_message', full_name='com.whatsapp.proto.Message.image_message', index=2,
+            name='image', full_name='com.whatsapp.proto.Message.image', index=2,
             number=3, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='contact_message', full_name='com.whatsapp.proto.Message.contact_message', index=3,
+            name='contact', full_name='com.whatsapp.proto.Message.contact', index=3,
             number=4, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='location_message', full_name='com.whatsapp.proto.Message.location_message', index=4,
+            name='location', full_name='com.whatsapp.proto.Message.location', index=4,
             number=5, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='extended_text_message', full_name='com.whatsapp.proto.Message.extended_text_message', index=5,
+            name='extended_text', full_name='com.whatsapp.proto.Message.extended_text', index=5,
             number=6, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='document_message', full_name='com.whatsapp.proto.Message.document_message', index=6,
+            name='document', full_name='com.whatsapp.proto.Message.document', index=6,
             number=7, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='audio_message', full_name='com.whatsapp.proto.Message.audio_message', index=7,
+            name='audio', full_name='com.whatsapp.proto.Message.audio', index=7,
             number=8, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='video_message', full_name='com.whatsapp.proto.Message.video_message', index=8,
+            name='video', full_name='com.whatsapp.proto.Message.video', index=8,
             number=9, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
             is_extension=False, extension_scope=None,
             options=None, file=DESCRIPTOR),
         _descriptor.FieldDescriptor(
-            name='contacts_array_message', full_name='com.whatsapp.proto.Message.contacts_array_message', index=9,
+            name='contact_array', full_name='com.whatsapp.proto.Message.contact_array', index=9,
             number=13, type=11, cpp_type=10, label=1,
             has_default_value=False, default_value=None,
             message_type=None, enum_type=None, containing_type=None,
@@ -116,8 +118,9 @@ _MESSAGE = _descriptor.Descriptor(
             index=0, containing_type=None, fields=[]),
     ],
     serialized_start=33,
-    serialized_end=685,
+    serialized_end=612,
 )
+
 
 _SENDERKEYDISTRIBUTIONMESSAGE = _descriptor.Descriptor(
     name='SenderKeyDistributionMessage',
@@ -154,9 +157,10 @@ _SENDERKEYDISTRIBUTIONMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=687,
-    serialized_end=783,
+    serialized_start=614,
+    serialized_end=710,
 )
+
 
 _IMAGEMESSAGE = _descriptor.Descriptor(
     name='ImageMessage',
@@ -254,9 +258,10 @@ _IMAGEMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=786,
-    serialized_end=1045,
+    serialized_start=713,
+    serialized_end=972,
 )
+
 
 _AUDIOMESSAGE = _descriptor.Descriptor(
     name='AudioMessage',
@@ -340,9 +345,10 @@ _AUDIOMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=1048,
-    serialized_end=1265,
+    serialized_start=975,
+    serialized_end=1192,
 )
+
 
 _VIDEOMESSAGE = _descriptor.Descriptor(
     name='VideoMessage',
@@ -440,9 +446,10 @@ _VIDEOMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=1268,
-    serialized_end=1527,
+    serialized_start=1195,
+    serialized_end=1454,
 )
+
 
 _LOCATIONMESSAGE = _descriptor.Descriptor(
     name='LocationMessage',
@@ -512,9 +519,10 @@ _LOCATIONMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=1530,
-    serialized_end=1723,
+    serialized_start=1457,
+    serialized_end=1650,
 )
+
 
 _DOCUMENTMESSAGE = _descriptor.Descriptor(
     name='DocumentMessage',
@@ -612,9 +620,10 @@ _DOCUMENTMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=1726,
-    serialized_end=1993,
+    serialized_start=1653,
+    serialized_end=1920,
 )
+
 
 _EXTENDEDTEXTMESSAGE = _descriptor.Descriptor(
     name='ExtendedTextMessage',
@@ -684,9 +693,10 @@ _EXTENDEDTEXTMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=1996,
-    serialized_end=2191,
+    serialized_start=1923,
+    serialized_end=2118,
 )
+
 
 _CONTEXTINFO = _descriptor.Descriptor(
     name='ContextInfo',
@@ -742,9 +752,10 @@ _CONTEXTINFO = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=2194,
-    serialized_end=2343,
+    serialized_start=2121,
+    serialized_end=2270,
 )
+
 
 _CONTACTMESSAGE = _descriptor.Descriptor(
     name='ContactMessage',
@@ -786,9 +797,10 @@ _CONTACTMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=2345,
-    serialized_end=2453,
+    serialized_start=2272,
+    serialized_end=2380,
 )
+
 
 _CONTACTSARRAYMESSAGE = _descriptor.Descriptor(
     name='ContactsArrayMessage',
@@ -830,46 +842,46 @@ _CONTACTSARRAYMESSAGE = _descriptor.Descriptor(
     extension_ranges=[],
     oneofs=[
     ],
-    serialized_start=2456,
-    serialized_end=2608,
+    serialized_start=2383,
+    serialized_end=2535,
 )
 
 _MESSAGE.fields_by_name['sender_key_distribution_message'].message_type = _SENDERKEYDISTRIBUTIONMESSAGE
-_MESSAGE.fields_by_name['image_message'].message_type = _IMAGEMESSAGE
-_MESSAGE.fields_by_name['contact_message'].message_type = _CONTACTMESSAGE
-_MESSAGE.fields_by_name['location_message'].message_type = _LOCATIONMESSAGE
-_MESSAGE.fields_by_name['extended_text_message'].message_type = _EXTENDEDTEXTMESSAGE
-_MESSAGE.fields_by_name['document_message'].message_type = _DOCUMENTMESSAGE
-_MESSAGE.fields_by_name['audio_message'].message_type = _AUDIOMESSAGE
-_MESSAGE.fields_by_name['video_message'].message_type = _VIDEOMESSAGE
-_MESSAGE.fields_by_name['contacts_array_message'].message_type = _CONTACTSARRAYMESSAGE
+_MESSAGE.fields_by_name['image'].message_type = _IMAGEMESSAGE
+_MESSAGE.fields_by_name['contact'].message_type = _CONTACTMESSAGE
+_MESSAGE.fields_by_name['location'].message_type = _LOCATIONMESSAGE
+_MESSAGE.fields_by_name['extended_text'].message_type = _EXTENDEDTEXTMESSAGE
+_MESSAGE.fields_by_name['document'].message_type = _DOCUMENTMESSAGE
+_MESSAGE.fields_by_name['audio'].message_type = _AUDIOMESSAGE
+_MESSAGE.fields_by_name['video'].message_type = _VIDEOMESSAGE
+_MESSAGE.fields_by_name['contact_array'].message_type = _CONTACTSARRAYMESSAGE
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['conversation'])
-_MESSAGE.fields_by_name['conversation'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['text'])
+_MESSAGE.fields_by_name['text'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['image_message'])
-_MESSAGE.fields_by_name['image_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['image'])
+_MESSAGE.fields_by_name['image'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['contact_message'])
-_MESSAGE.fields_by_name['contact_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['contact'])
+_MESSAGE.fields_by_name['contact'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['location_message'])
-_MESSAGE.fields_by_name['location_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['location'])
+_MESSAGE.fields_by_name['location'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['extended_text_message'])
-_MESSAGE.fields_by_name['extended_text_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['extended_text'])
+_MESSAGE.fields_by_name['extended_text'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['document_message'])
-_MESSAGE.fields_by_name['document_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['document'])
+_MESSAGE.fields_by_name['document'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['audio_message'])
-_MESSAGE.fields_by_name['audio_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['audio'])
+_MESSAGE.fields_by_name['audio'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['video_message'])
-_MESSAGE.fields_by_name['video_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['video'])
+_MESSAGE.fields_by_name['video'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _MESSAGE.oneofs_by_name['body'].fields.append(
-    _MESSAGE.fields_by_name['contacts_array_message'])
-_MESSAGE.fields_by_name['contacts_array_message'].containing_oneof = _MESSAGE.oneofs_by_name['body']
+    _MESSAGE.fields_by_name['contact_array'])
+_MESSAGE.fields_by_name['contact_array'].containing_oneof = _MESSAGE.oneofs_by_name['body']
 _IMAGEMESSAGE.fields_by_name['context_info'].message_type = _CONTEXTINFO
 _AUDIOMESSAGE.fields_by_name['context_info'].message_type = _CONTEXTINFO
 _VIDEOMESSAGE.fields_by_name['context_info'].message_type = _CONTEXTINFO

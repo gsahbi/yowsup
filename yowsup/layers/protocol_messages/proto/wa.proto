@@ -5,15 +5,15 @@ package com.whatsapp.proto;
 message Message {
     SenderKeyDistributionMessage sender_key_distribution_message   = 2;
     oneof body {
-        string                conversation            = 1;
-        ImageMessage          image_message           = 3;
-        ContactMessage        contact_message         = 4;
-        LocationMessage       location_message        = 5;
-        ExtendedTextMessage   extended_text_message   = 6;
-        DocumentMessage       document_message        = 7;
-        AudioMessage          audio_message           = 8;
-        VideoMessage          video_message           = 9;
-        ContactsArrayMessage  contacts_array_message  = 13;
+        string text = 1;
+        ImageMessage image = 3;
+        ContactMessage contact = 4;
+        LocationMessage location = 5;
+        ExtendedTextMessage extended_text = 6;
+        DocumentMessage document = 7;
+        AudioMessage audio = 8;
+        VideoMessage video = 9;
+        ContactsArrayMessage contact_array = 13;
     }
 }
 

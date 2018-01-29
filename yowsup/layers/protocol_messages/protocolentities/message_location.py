@@ -1,30 +1,18 @@
-from yowsup.structs import ProtocolEntity, ProtocolTreeNode
-from .message_media import MediaMessageProtocolEntity
-
-class LocationMediaMessageProtocolEntity(MediaMessageProtocolEntity):
-    '''
-    <message t="{{TIME_STAMP}}" from="{{CONTACT_JID}}"
-    offline="{{OFFLINE}}" type="text" id="{{MESSAGE_ID}}" notify="{{NOTIFY_NAME}}">
-        <media
-            latitude="52.52393"
-            type="location"
-            longitude="13.41747"
-            name="Location Name"
-            url="http://www.foursquare.com/XXXX"
-            encoding="raw"
-        >{{THUMBNAIL_RAWDATA}}</media>
-    </message>
-    '''
+from yowsup.layers.protocol_messages.protocolentities import MessageProtocolEntity
 
 
-    def __init__(self, latitude, longitude, name=None, url=None, encoding=None, _id = None, _from = None, to = None, notify = None, timestamp = None, participant = None,
-            preview = None, offline = None, retry = None, address = None):
+class LocationMessageProtocolEntity(MessageProtocolEntity):
 
-        super(LocationMediaMessageProtocolEntity, self).__init__("location", _id, _from, to, notify, timestamp, participant, preview, offline, retry)
-        self.setLocationMediaProps(latitude,longitude,name,address, url)
+    def __init__(self, latitude, longitude, name=None, url=None, encoding=None, _id=None, _from=None, to=None,
+                 notify=None, timestamp=None, participant=None,
+                 preview=None, offline=None, retry=None, address=None):
+
+        super(LocationMessageProtocolEntity, self).__init__("location", _id, _from, to, notify, timestamp, participant,
+                                                            preview, offline, retry)
+        self.setLocationMediaProps(latitude, longitude, name, address, url)
 
     def __str__(self):
-        out  = super(MediaMessageProtocolEntity, self).__str__()
+        out = super(MessageProtocolEntity, self).__str__()
         out += "Latitude: %s\n" % self.latitude
         out += "Longitude: %s\n" % self.longitude
         out += "Name: %s\n" % self.name
@@ -48,7 +36,6 @@ class LocationMediaMessageProtocolEntity(MediaMessageProtocolEntity):
     def getAddress(self):
         return self.address
 
-
     def setLocationMediaProps(self, latitude, longitude, locationName=None, address=None, url=None):
         self.latitude = str(latitude)
         self.longitude = str(longitude)
@@ -57,11 +44,11 @@ class LocationMediaMessageProtocolEntity(MediaMessageProtocolEntity):
         self.url = str(url)
 
     def toProtocolTreeNode(self):
-        node = super(LocationMediaMessageProtocolEntity, self).toProtocolTreeNode()
+        node = super(LocationMessageProtocolEntity, self).toProtocolTreeNode()
 
         mediaNode = node.getChild("enc")
-        mediaNode.setAttribute("latitude",  self.latitude)
-        mediaNode.setAttribute("longitude",  self.longitude)
+        mediaNode.setAttribute("latitude", self.latitude)
+        mediaNode.setAttribute("longitude", self.longitude)
 
         if self.name:
             mediaNode.setAttribute("name", self.name)
@@ -74,8 +61,8 @@ class LocationMediaMessageProtocolEntity(MediaMessageProtocolEntity):
 
     @staticmethod
     def fromProtocolTreeNode(node):
-        entity = MediaMessageProtocolEntity.fromProtocolTreeNode(node)
-        entity.__class__ = LocationMediaMessageProtocolEntity
+        entity = MessageProtocolEntity.fromProtocolTreeNode(node)
+        entity.__class__ = LocationMessageProtocolEntity
         mediaNode = node.getChild("media")
         entity.setLocationMediaProps(
             mediaNode.getAttributeValue("latitude"),

@@ -1,8 +1,13 @@
-from yowsup.layers import YowLayer
+import logging
+import os
+import shutil
+
 from yowsup import ProtocolTreeNode
+from yowsup.layers import YowLayer
 from .mediadownloader import MediaDownloader
-import shutil, os, logging
+
 logger = logging.getLogger(__name__)
+
 
 class YowMediaPictureLayer(YowLayer):
     def send(self, data):

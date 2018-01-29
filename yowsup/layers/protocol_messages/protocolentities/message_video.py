@@ -1,58 +1,27 @@
-from yowsup.structs import ProtocolEntity, ProtocolTreeNode
-from .message_media_downloadable import DownloadableMediaMessageProtocolEntity
-from yowsup.common.tools import VideoTools, MimeTools
-from Crypto.Cipher import AES
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
-from axolotl.kdf.hkdfv3 import HKDFv3
-from axolotl.util.byteutil import ByteUtil
-import binascii
-import base64
+from yowsup.common.tools import VideoTools
+from .message_downloadable import DownloadableMessageProtocolEntity
 
 
-class VideoDownloadableMediaMessageProtocolEntity(DownloadableMediaMessageProtocolEntity):
-    '''
-    <message t="{{TIME_STAMP}}" from="{{CONTACT_JID}}" 
-        offline="{{OFFLINE}}" type="media" id="{{MESSAGE_ID}}" notify="{{NOTIFY_NAME}}">
-        <media type="{{DOWNLOADABLE_MEDIA_TYPE: (image | audio | video)}}"
-            mimetype="{{MIME_TYPE}}"
-            filehash="{{FILE_HASH}}"
-            url="{{DOWNLOAD_URL}}"
-            ip="{{IP}}"
-            size="{{MEDIA SIZE}}"
-            file="{{FILENAME}}"
-
-
-            encoding="{{ENCODING}}"
-            height="{{IMAGE_HEIGHT}}"
-            width="{{IMAGE_WIDTH}}"
-
-            origin="forward"           
-            > {{THUMBNAIL_RAWDATA (JPEG?)}}
-        </media>
-    </message>
-    '''
+class VideoMessageProtocolEntity(DownloadableMessageProtocolEntity):
     cryptKeys = ''
 
     def __init__(self,
                  mimeType, fileHash, url, ip, size, fileName,
                  abitrate, acodec, asampfmt, asampfreq, duration, encoding, fps,
-                 width, height, seconds, vbitrate, vcodec, caption=None, mediaKey = None,
+                 width, height, seconds, vbitrate, vcodec, caption=None, mediaKey=None,
                  _id=None, _from=None, to=None, notify=None, timestamp=None,
                  participant=None, preview=None, offline=None, retry=None):
 
-        super(VideoDownloadableMediaMessageProtocolEntity, self).__init__("video",
-                                                                          mimeType, fileHash, url, ip, size, fileName, mediaKey,
-                                                                          None, _id, _from, to, notify, timestamp,
-                                                                          participant, preview, offline, retry)
+        super(VideoMessageProtocolEntity, self).__init__("video",
+                                                         mimeType, fileHash, url, ip, size, fileName, mediaKey,
+                                                         None, _id, _from, to, notify, timestamp,
+                                                         participant, preview, offline, retry)
         self.setVideoProps(encoding, width, height, vbitrate, abitrate, acodec, asampfmt, asampfreq, duration, fps,
                            seconds, vcodec, caption)
-        cryptKeys = '576861747341707020566964656f204b657973'
+        self.cryptKeys = '576861747341707020566964656f204b657973'
 
     def __str__(self):
-        out = super(VideoDownloadableMediaMessageProtocolEntity, self).__str__()
+        out = super(VideoMessageProtocolEntity, self).__str__()
         out += "Audio bitrate: %s\n" % self.abitrate
         out += "Audio codec: %s\n" % self.acodec
         out += "Audio sampling fmt.: %s\n" % self.asampfmt
@@ -70,32 +39,26 @@ class VideoDownloadableMediaMessageProtocolEntity(DownloadableMediaMessageProtoc
 
     def setVideoProps(self, encoding, width, height, vbitrate=None, abitrate=None, acodec=None, asampfmt=None,
                       asampfreq=None, duration=None, fps=None, seconds=None, vcodec=None, caption=None, ):
-        self.abitrate  = abitrate
-        self.acodec    = acodec
-        self.asampfmt  = asampfmt
+        self.abitrate = abitrate
+        self.acodec = acodec
+        self.asampfmt = asampfmt
         self.asampfreq = asampfreq
-        self.duration  = duration
-        self.encoding  = encoding
-        self.fps       = fps
-        self.height    = height
-        self.seconds   = seconds
-        self.vbitrate  = vbitrate
-        self.vcodec    = vcodec
-        self.width     = width
-        self.caption   = caption
+        self.duration = duration
+        self.encoding = encoding
+        self.fps = fps
+        self.height = height
+        self.seconds = seconds
+        self.vbitrate = vbitrate
+        self.vcodec = vcodec
+        self.width = width
+        self.caption = caption
         self.cryptKeys = '576861747341707020566964656f204b657973'
-
-    def setMimeType(self, mimeType):
-        self.mimeType = mimeType
-
-    def getExtension(self):
-        return MimeTools.getExtension(self.mimeType)
 
     def getCaption(self):
         return self.caption
 
     def toProtocolTreeNode(self):
-        node = super(VideoDownloadableMediaMessageProtocolEntity, self).toProtocolTreeNode()
+        node = super(VideoMessageProtocolEntity, self).toProtocolTreeNode()
         mediaNode = node.getChild("enc")
         if self.abitrate is not None:
             mediaNode.setAttribute("abitrate", self.abitrate)
@@ -136,8 +99,8 @@ class VideoDownloadableMediaMessageProtocolEntity(DownloadableMediaMessageProtoc
 
     @staticmethod
     def fromProtocolTreeNode(node):
-        entity = DownloadableMediaMessageProtocolEntity.fromProtocolTreeNode(node)
-        entity.__class__ = VideoDownloadableMediaMessageProtocolEntity
+        entity = DownloadableMessageProtocolEntity.fromProtocolTreeNode(node)
+        entity.__class__ = VideoMessageProtocolEntity
         mediaNode = node.getChild("media")
         entity.setMimeType(mediaNode.getAttributeValue("mimetype"))
         entity.setVideoProps(
@@ -160,10 +123,10 @@ class VideoDownloadableMediaMessageProtocolEntity(DownloadableMediaMessageProtoc
     @staticmethod
     def fromFilePath(path, url, ip, to, mimeType=None, caption=None):
         preview = VideoTools.generatePreviewFromVideo(path)
-        entity = DownloadableMediaMessageProtocolEntity.fromFilePath(path, url,
-                                                                     DownloadableMediaMessageProtocolEntity.MEDIA_TYPE_VIDEO,
-                                                                     ip, to, mimeType, preview)
-        entity.__class__ = VideoDownloadableMediaMessageProtocolEntity
+        entity = DownloadableMessageProtocolEntity.fromFilePath(path, url,
+                                                                DownloadableMessageProtocolEntity.MEDIA_TYPE_VIDEO,
+                                                                ip, to, mimeType, preview)
+        entity.__class__ = VideoMessageProtocolEntity
 
         width, height, bitrate, duration = VideoTools.getVideoProperties(path)
         assert width, "Could not determine video properties"
@@ -171,26 +134,3 @@ class VideoDownloadableMediaMessageProtocolEntity(DownloadableMediaMessageProtoc
         duration = int(duration)
         entity.setVideoProps('raw', width, height, duration=duration, seconds=duration, caption=caption)
         return entity
-
-
-    def decrypt(self, encvid, refkey):
-        derivative = HKDFv3().deriveSecrets(refkey, binascii.unhexlify(self.cryptKeys), 112)
-        parts = ByteUtil.split(derivative, 16, 32)
-        iv = parts[0]
-        cipherKey = parts[1]
-        e_vid = encvid[:-10]
-        AES.key_size = 128
-        cr_obj = AES.new(key=cipherKey, mode=AES.MODE_CBC, IV=iv)
-        return cr_obj.decrypt(e_vid)
-
-
-    def isEncrypted(self):
-        return self.cryptKeys and self.mediaKey
-
-
-    def getMediaContent(self):
-        data = urlopen(self.url.decode('ASCII')).read()
-        # data = urlopen(self.url).read()
-        if self.isEncrypted():
-            data = self.decrypt(data, self.mediaKey)
-        return bytearray(data)

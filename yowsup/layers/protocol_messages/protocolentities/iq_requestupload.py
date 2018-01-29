@@ -1,10 +1,11 @@
+import os
+
 from yowsup.common import YowConstants
+from yowsup.common.tools import WATools
 from yowsup.layers.protocol_iq.protocolentities import IqProtocolEntity
 from yowsup.structs import ProtocolTreeNode
-import hashlib
-import base64
-import os
-from yowsup.common.tools import WATools
+
+
 class RequestUploadIqProtocolEntity(IqProtocolEntity):
     '''
     <iq to="s.whatsapp.net" type="set" xmlns="w:m">
