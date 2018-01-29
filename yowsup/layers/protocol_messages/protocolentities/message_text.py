@@ -7,22 +7,22 @@ class TextMessageProtocolEntity(MessageProtocolEntity):
     def __init__(self, node):
         super(TextMessageProtocolEntity, self).__init__(node)
         body = node.getChild("body")
-        self.body = body.getData()
+        self.text = body.getData()
 
 
     def __str__(self):
         out = super(TextMessageProtocolEntity, self).__str__()
-        out += "Body: %s\n" % self.body
+        out += "Text: %s\n" % self.text
         return out
 
-    def setBody(self, body):
-        self.body = body
+    def setText(self, text):
+        self.text = text
 
-    def getBody(self):
-        return self.body
+    def getText(self):
+        return self.text
 
     def toProtocolTreeNode(self):
         node = super(TextMessageProtocolEntity, self).toProtocolTreeNode()
-        bodyNode = ProtocolTreeNode("body", {}, None, self.body)
+        bodyNode = ProtocolTreeNode("body", {}, None, self.text)
         node.addChild(bodyNode)
         return node

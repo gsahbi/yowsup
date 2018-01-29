@@ -29,16 +29,19 @@ class YowMessagesProtocolLayer(YowProtocolLayer):
     def recvMessageStanza(self, node):
 
         if node.getAttributeValue("type") == "text":
-            entity = TextMessageProtocolEntity(node)
+            message = node.getChild("body")
+            if message and message.getAttributeValue("type") == "extended_text":
+                entity = ExtendedTextMessageProtocolEntity(node)
+            else:
+                entity = TextMessageProtocolEntity(node)
+
             self.toUpper(entity)
 
         elif node.getAttributeValue("type") == "media":
             message = node.getChild("body")
             message_type = message.getAttributeValue("type")
 
-            if message_type == "extended_text":
-                entity = ExtendedTextMessageProtocolEntity(node)
-            elif message_type == "image":
+            if message_type == "image":
                 entity = ImageMessageProtocolEntity(node)
             elif message_type == "audio":
                 entity = AudioMessageProtocolEntity(node)

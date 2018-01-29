@@ -3,7 +3,7 @@ syntax = "proto3";
 package com.whatsapp.proto;
 
 message Message {
-    SenderKeyDistributionMessage sender_key_distribution_message   = 2;
+    SKDMessage sender_key_distribution_message   = 2;
     oneof body {
         string text = 1;
         ImageMessage image = 3;
@@ -17,7 +17,7 @@ message Message {
     }
 }
 
-message SenderKeyDistributionMessage {
+message SKDMessage {
     string groupId = 1;
     bytes axolotl_sender_key_distribution_message = 2;
 }

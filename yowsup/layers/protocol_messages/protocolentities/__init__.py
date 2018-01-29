@@ -5,7 +5,7 @@ from .message_audio import AudioMessageProtocolEntity
 from .message_contact import ContactMessageProtocolEntity
 from .message_document import DocumentMessageProtocolEntity
 from .message_downloadable import DownloadableMessageProtocolEntity
-from .message_extended_text import ExtendedTextMessageProtocolEntity
+from .message_text_extended import ExtendedTextMessageProtocolEntity
 from .message_image import ImageMessageProtocolEntity
 from .message_location import LocationMessageProtocolEntity
 from .message_text import TextMessageProtocolEntity

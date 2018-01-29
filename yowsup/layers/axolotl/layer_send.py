@@ -1,5 +1,5 @@
 from yowsup.layers.protocol_messages.proto.wa_pb2 import *
-from yowsup.layers.protocol_messages.proto.wa_pb2 import SenderKeyDistributionMessage as ProtoSenderKeyDistributionMessage
+from yowsup.layers.protocol_messages.proto.wa_pb2 import SKDMessage as ProtoSenderKeyDistributionMessage
 from yowsup.layers.axolotl.protocolentities import *
 from yowsup.layers.auth.layer_authentication import YowAuthenticationProtocolLayer
 from yowsup.layers.protocol_groups.protocolentities import InfoGroupsIqProtocolEntity, InfoGroupsResultIqProtocolEntity
