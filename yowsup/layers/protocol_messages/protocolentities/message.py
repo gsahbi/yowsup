@@ -4,29 +4,60 @@ from yowsup.layers.protocol_receipts.protocolentities import OutgoingReceiptProt
 from yowsup.structs import ProtocolEntity
 
 
-class MessageProtocolEntity(ProtocolEntity):
+class MessageContext(object):
 
+    def __init__(self, stanza_id=None, participant=None,
+                 remote_jid=None, mentioned_jid=None, quoted_message=None):
+        self.stanza_id = stanza_id
+        self.participant = participant
+        self.quoted_message = quoted_message
+        self.remote_jid = remote_jid
+        self.mentioned_jid = mentioned_jid
+
+    def __str__(self):
+
+        out = ''
+        if self.stanza_id is not None:
+            out += "Reply context:\n"
+            out += "\tMessage ID: %s\n" % self.stanza_id
+            out += "\tParticipant: %s\n" % self.participant
+            if self.quoted_message is not None:
+                out += "\tQuoted message:\n"
+                out += "\t\tType: %s\n" % " ".join(self.quoted_message.keys())
+
+
+        if self.mentioned_jid is not None:
+            out += "Mention context:\n"
+            out += "\tMentioned JIDs: %s\n" % ", ".join(self.mentioned_jid)
+            if self.remote_jid is not None:
+                out += "\tRemote JID: %s\n" % self.remote_jid
+
+        return out
+
+
+class MessageProtocolEntity(ProtocolEntity):
     MESSAGE_TYPE_TEXT = "text"
     MESSAGE_TYPE_MEDIA = "media"
 
     def __init__(self, node):
 
         super(MessageProtocolEntity, self).__init__("message")
-        offline = node.getAttributeValue('offline')
-        retry = node.getAttributeValue('retry')
-        self._type = node.getAttributeValue('type')
-        self._id = node.getAttributeValue('id') or self._generateId()
-        self._from = node.getAttributeValue('from')
-        self.to = node.getAttributeValue('to')
-        self.timestamp = int(node.getAttributeValue('t')) or self._getCurrentTimestamp()
-        self.notify = node.getAttributeValue('notify')
+        offline = node['offline']
+        retry = node['retry']
+        self._type = node['type']
+        self._id = node['id'] or self._generateId()
+        self._from = node['from']
+        self.to = node['to']
+        self.timestamp = int(node['t']) or self._getCurrentTimestamp()
+        self.notify = node['notify']
         self.offline = offline == "1" if offline is not None else offline
         self.retry = int(retry) if retry else None
-        self.participant = node.getAttributeValue('participant')
+        self.participant = node['participant']
+        self.context = None
 
-        assert (self.to or self._from), "Must specify either to or _from jids to create the message"
-        assert not (self.to and self._from), "Can't set both attributes to message at same time (to, _from)"
-
+        body = node.getChild('body')
+        if body is not None and 'context_info' in body.data:
+            self.context = MessageContext(**body.data['context_info'])
 
     def getType(self):
         return self._type
@@ -100,6 +131,9 @@ class MessageProtocolEntity(ProtocolEntity):
         out += "Timestamp: %s\n" % self.timestamp
         if self.participant:
             out += "Participant: %s\n" % self.participant
+        if self.context:
+            out += str(self.context)
+
         return out
 
     def ack(self, read=False):
