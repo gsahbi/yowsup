@@ -99,11 +99,11 @@ class DocumentMessageProtocolEntity(DownloadableMessageProtocolEntity):
         return s[:-ord(s[len(s) - 1:])]
 
 
-    def isEncrypted(self):
+    def is_encrypted(self):
         return self.cryptKeys and self.mediaKey
 
     def getMediaContent(self):
         data = urlopen(self.url.decode('ASCII')).read()
-        if self.isEncrypted():
+        if self.is_encrypted():
             data = self.decrypt(data, self.mediaKey)
         return data

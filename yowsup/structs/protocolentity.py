@@ -21,12 +21,18 @@ class ProtocolEntity(object):
     def _createProtocolTreeNode(self, attributes, children=None, data=None):
         return ProtocolTreeNode(self.getTag(), attributes, children, data)
 
-    def _getCurrentTimestamp(self):
+    @staticmethod
+    def _getCurrentTimestamp():
         return int(time.time())
 
-    def _generateId(self, short=False):
+    @staticmethod
+    def _generateId(short=False):
         ProtocolEntity.__ID_GEN += 1
         return str(ProtocolEntity.__ID_GEN) if short else str(int(time.time())) + "-" + str(ProtocolEntity.__ID_GEN)
 
     def toProtocolTreeNode(self):
         pass
+
+    def build(self, tag):
+        self.tag = tag
+

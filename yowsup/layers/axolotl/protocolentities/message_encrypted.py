@@ -40,3 +40,9 @@ HEX:33089eb3c90312210510e0196be72fe65913c6a84e75a54f40a3ee290574d6a23f408df990e7
 
         return node
 
+    @staticmethod
+    def encapsulate(node, encEntities, _type):
+        assert node.__class__ == ProtocolTreeNode
+        node.__class__ = EncryptedMessageProtocolEntity
+        node.setEncEntities(encEntities)
+        node._type = _type

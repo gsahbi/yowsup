@@ -13,22 +13,24 @@ from .message import MessageProtocolEntity
 
 class DownloadableMessageProtocolEntity(MessageProtocolEntity):
 
+
     def __init__(self, node=None):
         super(DownloadableMessageProtocolEntity, self).__init__(node)
         self.setDownloadableMediaProps(**node.getChild("body").data)
+        self.crypt_keys = None
 
     def __str__(self):
         out = super(DownloadableMessageProtocolEntity, self).__str__()
-        out += "MimeType: %s\n" % self.mimeType
-        out += "File Hash: %s\n" % self.fileHash
+        out += "MimeType: %s\n" % self.mime_type
+        out += "File Hash: %s\n" % self.file_hash
         out += "URL: %s\n" % self.url
         out += "File Size: %s\n" % self.size
-        out += "File name: %s\n" % self.fileName
-        out += "File %s encrypted\n" % "is" if self.isEncrypted() else "is NOT"
+        out += "File name: %s\n" % self.file_name
+        out += "File %s encrypted\n" % ("is" if self.is_encrypted() else "is NOT")
         return out
 
     def decrypt(self, encdata, refkey):
-        derivative = HKDFv3().deriveSecrets(refkey, binascii.unhexlify(self.cryptKeys), 112)
+        derivative = HKDFv3().deriveSecrets(refkey, binascii.unhexlify(self.crypt_keys), 112)
         parts = ByteUtil.split(derivative, 16, 32)
         iv = parts[0]
         cipherKey = parts[1]
@@ -37,13 +39,13 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
         cr_obj = AES.new(key=cipherKey, mode=AES.MODE_CBC, IV=iv)
         return cr_obj.decrypt(e_data)
 
-    def isEncrypted(self):
-        return self.cryptKeys and self.mediaKey
+    def is_encrypted(self):
+        return self.crypt_keys and self.media_key
 
     def getMediaContent(self):
         data = urlopen(self.url.decode('ASCII')).read()
-        if self.isEncrypted():
-            data = self.decrypt(data, self.mediaKey)
+        if self.is_encrypted():
+            data = self.decrypt(data, self.media_key)
         return bytearray(data)
 
     def getMediaSize(self):
@@ -53,33 +55,32 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
         return self.url
 
     def getMimeType(self):
-        return self.mimeType
+        return self.mime_type
 
     def getExtension(self):
-        return mimetypes.guess_extension(self.mimeType)
+        return mimetypes.guess_extension(self.mime_type)
 
     def toProtocolTreeNode(self):
         node = super(DownloadableMessageProtocolEntity, self).toProtocolTreeNode()
         mediaNode = node.getChild("enc")
-        mediaNode.setAttribute("mimetype", self.mimeType)
-        mediaNode.setAttribute("filehash", self.fileHash)
+        mediaNode.setAttribute("mime_type", self.mime_type)
+        mediaNode.setAttribute("file_hash", self.file_hash)
         mediaNode.setAttribute("url", self.url["url"].encode())
         mediaNode.setAttribute("size", str(self.size))
-        mediaNode.setAttribute("mediakey", self.url["mediaKey"])
+        mediaNode.setAttribute("media_key", self.url["media_key"])
         mediaNode.setAttribute("file_enc_sha256", self.url["file_enc_sha256"])
 
         return node
 
     def setDownloadableMediaProps(self, mime_type, file_sha256, file_enc_sha256,
                                   url, file_length, media_key, file_name=None, **kwargs):
-        self.mimeType = mime_type
-        self.fileHash = file_sha256
+        self.mime_type = mime_type
+        self.file_hash = file_sha256
         self.url = url
         self.size = int(file_length)
-        self.fileEncSHA256 = file_enc_sha256
-        self.mediaKey = media_key
-        self.cryptKeys = None
-        self.fileName = file_name
+        self.file_enc_SHA256 = file_enc_sha256
+        self.media_key = media_key
+        self.file_name = file_name
 
 
     @staticmethod

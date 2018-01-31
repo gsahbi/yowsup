@@ -32,6 +32,11 @@ class Jid:
             return "%s@%s" % (number, YowConstants.WHATSAPP_GROUP_SERVER)
         return "%s@%s" % (number, YowConstants.WHATSAPP_SERVER)
 
+    @staticmethod
+    def denormalize(number):
+        if '@' in number:
+            return number.split("@", 1)[0]
+        return number
 
 class HexTools:
     decode_hex = codecs.getdecoder("hex_codec")

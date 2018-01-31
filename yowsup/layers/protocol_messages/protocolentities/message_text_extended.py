@@ -5,7 +5,6 @@ from yowsup.structs import ProtocolTreeNode
 class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
 
     def __init__(self, node):
-
         super(ExtendedTextMessageProtocolEntity, self).__init__(node)
         self.setExtendedTextProps(**node.getChild("body").data)
 

@@ -6,6 +6,8 @@ from .message_downloadable import DownloadableMessageProtocolEntity
 
 class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
 
+    crypt_keys = '576861747341707020496d616765204b657973'
+
     def __init__(self, node):
 
         super(ImageMessageProtocolEntity, self).__init__(node)
@@ -25,7 +27,6 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
         self.width = int(width)
         self.height = int(height)
         self.caption = caption
-        self.cryptKeys = '576861747341707020496d616765204b657973'
 
 
     def getCaption(self):
