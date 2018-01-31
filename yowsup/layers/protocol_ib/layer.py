@@ -1,7 +1,11 @@
+# -*- coding utf-8 -*-
+
 from yowsup.layers import YowLayer, YowLayerEvent, YowProtocolLayer
 from .protocolentities import *
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class YowIbProtocolLayer(YowProtocolLayer):
 
@@ -28,4 +32,4 @@ class YowIbProtocolLayer(YowProtocolLayer):
             self.toUpper(AccountIbProtocolEntity.fromProtocolTreeNode(node))
         else:
             logger.error("Unknown ib node %s" % node)
-            #raise ValueError("Unkown ib node %s" % node)
+            # raise ValueError("Unkown ib node %s" % node)

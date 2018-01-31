@@ -1,11 +1,14 @@
-from yowsup.layers import YowLayer, YowLayerEvent, EventCallback
+# -*- coding utf-8 -*-
+
+from yowsup.layers import YowLayer, EventCallback
 from yowsup.layers.network import YowNetworkLayer
 from .encoder import WriteEncoder
 from .decoder import ReadDecoder
 from .tokendictionary import TokenDictionary
-class YowCoderLayer(YowLayer):
 
-    PROP_DOMAIN =   "org.openwhatsapp.yowsup.prop.domain"
+
+class YowCoderLayer(YowLayer):
+    PROP_DOMAIN = "org.openwhatsapp.yowsup.prop.domain"
     PROP_RESOURCE = "org.openwhatsapp.yowsup.prop.resource"
 
     def __init__(self):
@@ -13,7 +16,7 @@ class YowCoderLayer(YowLayer):
         tokenDictionary = TokenDictionary()
         self.writer = WriteEncoder(tokenDictionary)
         self.reader = ReadDecoder(tokenDictionary)
-    
+
     @EventCallback(YowNetworkLayer.EVENT_STATE_CONNECTED)
     def onConnected(self, event):
         self.writer.reset()
@@ -24,7 +27,7 @@ class YowCoderLayer(YowLayer):
         )
         for i in range(0, 4):
             self.write(streamStartBytes.pop(0))
-        self.write(streamStartBytes)        
+        self.write(streamStartBytes)
 
     def send(self, data):
         self.write(self.writer.protocolTreeNodeToBytes(data))
@@ -35,7 +38,7 @@ class YowCoderLayer(YowLayer):
             self.toUpper(node)
 
     def write(self, i):
-        if(type(i) in(list, tuple)):
+        if type(i) in (list, tuple):
             self.toLower(bytearray(i))
         else:
             self.toLower(bytearray([i]))

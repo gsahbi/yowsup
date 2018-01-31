@@ -1,6 +1,11 @@
+# -*- coding utf-8 -*-
+
 from yowsup.layers import YowLayer
 import logging
+
 logger = logging.getLogger(__name__)
+
+
 class YowLoggerLayer(YowLayer):
 
     def send(self, data):

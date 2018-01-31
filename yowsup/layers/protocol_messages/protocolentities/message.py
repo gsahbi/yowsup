@@ -57,51 +57,32 @@ class MessageContext(object):
     def get_stanza_id(self):
         return self.stanza_id
 
+
 class MessageProtocolEntity(ProtocolEntity):
 
-    def __init__(self, node):
-
-        super(MessageProtocolEntity, self).__init__("message")
-        self.offline = node['offline']
-        self.retry = node['retry']
-        self._type = node['type']
-        self._id = node['id'] or self._generateId()
-        self._from = node['from']
-        self.to = node['to']
-        self.timestamp = int(node['t']) or self._getCurrentTimestamp()
-        self.notify = node['notify']
-        self.participant = node['participant']
-        self.context = None
-        self.is_broadcast = False
-
-        body = node.getChild('body')
-        if body is not None and 'context_info' in body.data:
-            self.context = MessageContext(**body.data['context_info'])
-
-    def build(self, _type, _id=None, _from=None, to=None, notify=None, timestamp=None,
-              participant=None, offline=None, retry=None):
+    def __init__(self, _type, _id=None, _from=None, to=None, notify=None, timestamp=None,
+                 participant=None, offline=None, retry=None, context=None):
 
         assert (to or _from), "Must specify either to or _from jids to create the message"
         assert not (to and _from), "Can't set both attributes to message at same time (to, _from)"
 
-        super(MessageProtocolEntity, self).build("message")
+        super(MessageProtocolEntity, self).__init__("message")
         self._type = _type
-        self._id = MessageProtocolEntity._generateId()
+        self._id = self._generateId() if _id is None else _id
         self._from = _from
         self.to = to
-        self.timestamp = int(timestamp) if timestamp else MessageProtocolEntity._getCurrentTimestamp()
+        self.timestamp = int(timestamp) if timestamp else self._getCurrentTimestamp()
         self.notify = notify
         self.offline = offline == "1" if offline is not None else offline
         self.retry = int(retry) if retry else None
         self.participant = participant
-        self.context = None
-        self.is_broadcast = False
-
-    def getContext(self):
-        return self.context
+        self.context = context
 
     def getType(self):
         return self._type
+
+    def getContext(self):
+        return self.context
 
     def getId(self):
         return self._id
@@ -112,8 +93,9 @@ class MessageProtocolEntity(ProtocolEntity):
     def getFrom(self, full=True):
         return self._from if full else self._from.split('@')[0]
 
+    # TODO : Implement broadcast
     def isBroadcast(self):
-        return self.is_broadcast
+        return False
 
     def getTo(self, full=True):
         return self.to if full else self.to.split('@')[0]
@@ -126,6 +108,56 @@ class MessageProtocolEntity(ProtocolEntity):
 
     def getNotify(self):
         return self.notify
+
+    def isOutgoing(self):
+        return self._from is None
+
+    def isGroupMessage(self):
+        if self.isOutgoing():
+            return "-" in self.to
+        return self.participant is not None
+
+    def __str__(self):
+        out = "Message:\n"
+        out += "ID: %s\n" % self._id
+        out += "To: %s\n" % self.to if self.isOutgoing() else "From: %s\n" % self._from
+        out += "Type:  %s\n" % self._type
+        out += "Timestamp: %s\n" % self.timestamp
+        if self.participant:
+            out += "Participant: %s\n" % self.participant
+        return out
+
+    def ack(self, read=False):
+        return OutgoingReceiptProtocolEntity(self.getId(), self.getFrom(), read,
+                                             participant=self.getParticipant())
+
+    def forward(self, to, _id=None):
+        OutgoingMessage = deepcopy(self)
+        OutgoingMessage.to = to
+        OutgoingMessage._from = None
+        OutgoingMessage._id = self._generateId() if _id is None else _id
+        return OutgoingMessage
+
+    @staticmethod
+    def fromProtocolTreeNode(node):
+
+        context = None
+        body = node.getChild('body')
+        if body is not None and 'context_info' in body.data:
+            context = MessageContext(**body.data['context_info'])
+
+        return MessageProtocolEntity(
+            node["type"],
+            node["id"],
+            node["from"],
+            node["to"],
+            node["notify"],
+            node["t"],
+            node["participant"],
+            node["offline"],
+            node["retry"],
+            context
+        )
 
     def toProtocolTreeNode(self):
         attribs = {
@@ -155,35 +187,3 @@ class MessageProtocolEntity(ProtocolEntity):
         #    xNode = ProtocolTreeNode("x", {"xmlns": "jabber:x:event"}, [serverNode])
 
         return self._createProtocolTreeNode(attribs, children=[xNode] if xNode else None, data=None)
-
-    def isOutgoing(self):
-        return self._from is None
-
-    def isGroupMessage(self):
-        if self.isOutgoing():
-            return "-" in self.to
-        return self.participant is not None
-
-    def __str__(self):
-        out = "Message:\n"
-        out += "ID: %s\n" % self._id
-        out += "To: %s\n" % self.to if self.isOutgoing() else "From: %s\n" % self._from
-        out += "Type:  %s\n" % self._type
-        out += "Timestamp: %s\n" % self.timestamp
-        if self.participant:
-            out += "Participant: %s\n" % self.participant
-        if self.context:
-            out += str(self.context)
-
-        return out
-
-    def ack(self, read=False):
-        return OutgoingReceiptProtocolEntity(
-            self.getId(), self.getFrom(), read, participant=self.getParticipant())
-
-    def forward(self, to, _id=None):
-        OutgoingMessage = deepcopy(self)
-        OutgoingMessage.to = to
-        OutgoingMessage._from = None
-        OutgoingMessage._id = self._generateId() if _id is None else _id
-        return OutgoingMessage

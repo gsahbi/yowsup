@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 import binascii
 import copy
 import logging
@@ -95,7 +97,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             self.toUpper(protocolTreeNode)
 
     def handleEncMessage(self, node):
-        encMessageProtocolEntity = EncryptedMessageProtocolEntity(node)
+        encMessageProtocolEntity = EncryptedMessageProtocolEntity.fromProtocolTreeNode(node)
         isGroup = node["participant"] is not None
         senderJid = node["participant"] if isGroup else node["from"]
         if node.getChild("enc")["v"] == "2" and node["from"] not in self.v2Jids:
@@ -147,7 +149,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
                 logger.error("Ignoring message with untrusted identity")
 
     def handlePreKeyWhisperMessage(self, node):
-        pkMessageProtocolEntity = EncryptedMessageProtocolEntity(node)
+        pkMessageProtocolEntity = EncryptedMessageProtocolEntity.fromProtocolTreeNode(node)
         enc = pkMessageProtocolEntity.getEnc(EncProtocolEntity.TYPE_PKMSG)
         preKeyWhisperMessage = PreKeyWhisperMessage(serialized=enc.getData())
         sessionCipher = self.getSessionCipher(pkMessageProtocolEntity.getAuthor(False))
@@ -160,7 +162,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             logger.error("Ignoring message with old version")
 
     def handleWhisperMessage(self, node):
-        encMessageProtocolEntity = EncryptedMessageProtocolEntity(node)
+        encMessageProtocolEntity = EncryptedMessageProtocolEntity.fromProtocolTreeNode(node)
 
         enc = encMessageProtocolEntity.getEnc(EncProtocolEntity.TYPE_MSG)
         whisperMessage = WhisperMessage(serialized=enc.getData())
@@ -175,7 +177,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             self.handleConversationMessage(encMessageProtocolEntity.toProtocolTreeNode(), plaintext)
 
     def handleSenderKeyMessage(self, node):
-        encMessageProtocolEntity = EncryptedMessageProtocolEntity(node)
+        encMessageProtocolEntity = EncryptedMessageProtocolEntity.fromProtocolTreeNode(node)
         enc = encMessageProtocolEntity.getEnc(EncProtocolEntity.TYPE_SKMSG)
 
         senderKeyName = SenderKeyName(encMessageProtocolEntity.getFrom(True),
@@ -304,7 +306,8 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
 
         onResult = lambda _, __: self.persistKeys(registrationId, identityKeyPair, preKeys, signedPreKey, fresh)
         self._sendIq(setKeysIq,
-                     onResult)  # TODO: reintroduce error handler (was _sendIq(setKeysIq, onResult, self.onSentKeysError))
+                     onResult)
+        # TODO: reintroduce error handler (was _sendIq(setKeysIq, onResult, self.onSentKeysError))
 
     def persistKeys(self, registrationId, identityKeyPair, preKeys, signedPreKey, fresh):
         total = len(preKeys)

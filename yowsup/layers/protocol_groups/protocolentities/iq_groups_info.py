@@ -1,16 +1,16 @@
-from yowsup.structs import ProtocolEntity, ProtocolTreeNode
+from yowsup.structs import ProtocolTreeNode
 from .iq_groups import GroupsIqProtocolEntity
+
+
 class InfoGroupsIqProtocolEntity(GroupsIqProtocolEntity):
-    '''
+    """
     <iq id="{{id}}"" type="get" to="{{group_jid}}" xmlns="w:g2">
         <query request="interactive"></query>
     </iq>
-
-
-    '''
+    """
 
     def __init__(self, group_jid, _id=None):
-        super(InfoGroupsIqProtocolEntity, self).__init__(to = group_jid, _id = _id, _type = "get")
+        super(InfoGroupsIqProtocolEntity, self).__init__(to=group_jid, _id=_id, _type="get")
         self.setProps(group_jid)
 
     def setProps(self, group_jid):

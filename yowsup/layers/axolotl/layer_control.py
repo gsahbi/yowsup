@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 from .layer_base import AxolotlBaseLayer
 from yowsup.layers import YowLayerEvent, EventCallback
 from yowsup.layers.network.layer import YowNetworkLayer
@@ -13,6 +15,7 @@ import sys
 
 logger = logging.getLogger(__name__)
 
+
 class AxolotlControlLayer(AxolotlBaseLayer):
     _STATE_INIT = 0
     _STATE_GENKEYS = 1
@@ -27,7 +30,7 @@ class AxolotlControlLayer(AxolotlBaseLayer):
     def onNewStoreSet(self, store):
         super(AxolotlControlLayer, self).onNewStoreSet(store)
         if store is not None:
-            self.state = self.__class__._STATE_HASKEYS if  store.getLocalRegistrationId() is not None \
+            self.state = self.__class__._STATE_HASKEYS if store.getLocalRegistrationId() is not None \
                 else self.__class__._STATE_INIT
 
     def send(self, node):
@@ -44,17 +47,17 @@ class AxolotlControlLayer(AxolotlBaseLayer):
             self.toUpper(protocolTreeNode)
 
     def isInitState(self):
-        return self.store == None or self.state == self.__class__._STATE_INIT
+        return self.store is None or self.state == self.__class__._STATE_INIT
 
     def isGenKeysState(self):
         return self.state == self.__class__._STATE_GENKEYS
 
-
     def onEncryptNotification(self, protocolTreeNode):
         entity = EncryptNotification.fromProtocolTreeNode(protocolTreeNode)
-        ack = OutgoingAckProtocolEntity(protocolTreeNode["id"], "notification", protocolTreeNode["type"], protocolTreeNode["from"])
+        ack = OutgoingAckProtocolEntity(protocolTreeNode["id"], "notification", protocolTreeNode["type"],
+                                        protocolTreeNode["from"])
         self.toLower(ack.toProtocolTreeNode())
-        self.sendKeys(fresh=False, countPreKeys = self.__class__._COUNT_PREKEYS - entity.getCount())
+        self.sendKeys(fresh=False, countPreKeys=self.__class__._COUNT_PREKEYS - entity.getCount())
 
     @EventCallback(EVENT_PREKEYS_SET)
     def onPreKeysSet(self, yowLayerEvent):
@@ -74,19 +77,20 @@ class AxolotlControlLayer(AxolotlBaseLayer):
     @EventCallback(YowNetworkLayer.EVENT_STATE_DISCONNECTED)
     def onDisconnected(self, yowLayerEvent):
         if self.isGenKeysState():
-            #we requested this disconnect in this layer to switch off passive
-            #no need to traverse it to upper layers?
+            # we requested this disconnect in this layer to switch off passive
+            # no need to traverse it to upper layers?
             self.setProp(YowAuthenticationProtocolLayer.PROP_PASSIVE, False)
             self.state = self.__class__._STATE_HASKEYS
             self.getLayerInterface(YowNetworkLayer).connect()
         else:
             self.store = None
-    ### keys set and get
-    def sendKeys(self, fresh = True, countPreKeys = _COUNT_PREKEYS):
-        identityKeyPair     = KeyHelper.generateIdentityKeyPair() if fresh else self.store.getIdentityKeyPair()
-        registrationId      = KeyHelper.generateRegistrationId() if fresh else self.store.getLocalRegistrationId()
-        preKeys             = KeyHelper.generatePreKeys(KeyHelper.getRandomSequence(), countPreKeys)
-        signedPreKey        = KeyHelper.generateSignedPreKey(identityKeyPair, KeyHelper.getRandomSequence(65536))
+
+    # keys set and get
+    def sendKeys(self, fresh=True, countPreKeys=_COUNT_PREKEYS):
+        identityKeyPair = KeyHelper.generateIdentityKeyPair() if fresh else self.store.getIdentityKeyPair()
+        registrationId = KeyHelper.generateRegistrationId() if fresh else self.store.getLocalRegistrationId()
+        preKeys = KeyHelper.generatePreKeys(KeyHelper.getRandomSequence(), countPreKeys)
+        signedPreKey = KeyHelper.generateSignedPreKey(identityKeyPair, KeyHelper.getRandomSequence(65536))
         preKeysDict = {}
         for preKey in preKeys:
             keyPair = preKey.getKeyPair()
@@ -96,7 +100,8 @@ class AxolotlControlLayer(AxolotlBaseLayer):
                           self.adjustArray(signedPreKey.getKeyPair().getPublicKey().serialize()[1:]),
                           self.adjustArray(signedPreKey.getSignature()))
 
-        setKeysIq = SetKeysIqProtocolEntity(self.adjustArray(identityKeyPair.getPublicKey().serialize()[1:]), signedKeyTuple, preKeysDict, Curve.DJB_TYPE, self.adjustId(registrationId))
+        setKeysIq = SetKeysIqProtocolEntity(self.adjustArray(identityKeyPair.getPublicKey().serialize()[1:]),
+                                            signedKeyTuple, preKeysDict, Curve.DJB_TYPE, self.adjustId(registrationId))
 
         onResult = lambda _, __: self.persistKeys(registrationId, identityKeyPair, preKeys, signedPreKey, fresh)
         self._sendIq(setKeysIq, onResult, self.onSentKeysError)
@@ -117,7 +122,7 @@ class AxolotlControlLayer(AxolotlBaseLayer):
             if currPercentage == prevPercentage:
                 continue
             prevPercentage = currPercentage
-            #logger.debug("%s" % currPercentage + "%")
+            # logger.debug("%s" % currPercentage + "%")
             sys.stdout.write("Storing prekeys %d%% \r" % (currPercentage))
             sys.stdout.flush()
 

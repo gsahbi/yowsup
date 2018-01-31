@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 from yowsup.layers.protocol_messages.proto.wa_pb2 import *
 from yowsup.layers.protocol_messages.proto.wa_pb2 import SKDMessage as ProtoSenderKeyDistributionMessage
 from yowsup.layers.axolotl.protocolentities import *
@@ -29,14 +31,13 @@ class AxolotlSendLayer(AxolotlBaseLayer):
         self.sessionCiphers = {}
         self.groupSessionBuilder = None
         self.groupCiphers = {}
-        '''
-            Sent messages will be put in skalti entQueue until we receive a receipt for them.
-            This is for handling retry receipts which requires re-encrypting and resend of the original message
-            As the receipt for a sent message might arrive at a different yowsup instance,
-            ideally the original message should be fetched from a persistent storage.
-            Therefore, if the original message is not in sentQueue for any reason, we will
-            notify the upper layers and let them handle it.
-        '''
+
+        # Sent messages will be put in skalti entQueue until we receive a receipt for them.
+        # This is for handling retry receipts which requires re-encrypting and resend of the original message
+        # As the receipt for a sent message might arrive at a different yowsup instance,
+        # ideally the original message should be fetched from a persistent storage.
+        # Therefore, if the original message is not in sentQueue for any reason, we will
+        # notify the upper layers and let them handle it.
         self.sentQueue = []
 
     def onNewStoreSet(self, store):
@@ -50,7 +51,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
         recipient_id = node["to"].split('@')[0]
         v2 = node["to"]
         if node.getChild("enc"):  # media enc is only for v2 messsages
-            if '-' in recipient_id:  ## Handle Groups
+            if '-' in recipient_id:  # Handle Groups
                 def getResultNodes(resultNode, requestEntity):
                     groupInfo = InfoGroupsResultIqProtocolEntity.fromProtocolTreeNode(resultNode)
                     jids = list(groupInfo.getParticipants().keys())  # keys in py3 returns dict_keys
@@ -199,9 +200,16 @@ class AxolotlSendLayer(AxolotlBaseLayer):
 
     def sendEncEntities(self, node, encEntities):
         mediaType = None
-        messageEntity = EncryptedMessageProtocolEntity.encapsulate(node, encEntities,
-                                                                   _type="text" if not mediaType else "media")
-
+        messageEntity = EncryptedMessageProtocolEntity(encEntities,
+                                           "text" if not mediaType else "media",
+                                           _id=node["id"],
+                                           to=node["to"],
+                                           notify=node["notify"],
+                                           timestamp=node["timestamp"],
+                                           participant=node["participant"],
+                                           offline=node["offline"],
+                                           retry=node["retry"]
+                                           )
         self.enqueueSent(node)
         self.toLower(messageEntity.toProtocolTreeNode())
 

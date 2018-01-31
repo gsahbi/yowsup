@@ -2,7 +2,9 @@ import json, sys
 from xml.dom import minidom
 import plistlib
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 class ResponseParser(object):
     def __init__(self):
@@ -13,7 +15,6 @@ class ResponseParser(object):
 
     def getMeta(self):
         return self.meta
-
 
     def getVars(self, pvars):
 
@@ -28,6 +29,7 @@ class ResponseParser(object):
                 out[p] = p
 
             return out
+
 
 class XMLResponseParser(ResponseParser):
 
@@ -52,11 +54,11 @@ class XMLResponseParser(ResponseParser):
             vals[k] = []
             for r in res:
 
-                #if not vals.has_key(r.name):
+                # if not vals.has_key(r.name):
                 #   vals[r.name] = []
 
                 if r.type == 'element':
-                    #vals[r.name].append(self.xmlToDict(minidom.parseString(str(r)))[r.name])
+                    # vals[r.name].append(self.xmlToDict(minidom.parseString(str(r)))[r.name])
                     vals[k].append(self.xmlToDict(minidom.parseString(str(r)))[r.name])
                 elif r.type == 'attribute':
                     vals[k].append(r.content)
@@ -72,8 +74,7 @@ class XMLResponseParser(ResponseParser):
 
     def xmlToDict(self, xmlNode):
         if xmlNode.nodeName == "#document":
-
-            node = {xmlNode.firstChild.nodeName:{}}
+            node = {xmlNode.firstChild.nodeName: {}}
 
             node[xmlNode.firstChild.nodeName] = self.xmlToDict(xmlNode.firstChild)
             return node
@@ -95,13 +96,13 @@ class XMLResponseParser(ResponseParser):
                 curr[n.nodeName] = []
 
             if len(xmlNode.getElementsByTagName(n.nodeName)) > 1:
-                #curr[n.nodeName] = []
+                # curr[n.nodeName] = []
                 curr[n.nodeName].append(self.xmlToDict(n))
             else:
                 curr[n.nodeName] = self.xmlToDict(n)
 
-
         return node
+
 
 class JSONResponseParser(ResponseParser):
 
@@ -115,7 +116,7 @@ class JSONResponseParser(ResponseParser):
 
         parsed = {}
 
-        for k,v in pvars.items():
+        for k, v in pvars.items():
             parsed[k] = self.query(d, v)
 
         return parsed
@@ -125,11 +126,11 @@ class JSONResponseParser(ResponseParser):
 
         currKey = keys[0]
 
-        if(currKey in d):
+        if (currKey in d):
             item = d[currKey]
 
             if len(keys) == 1:
-                    return item
+                return item
 
             if type(item) is dict:
                 return self.query(item, keys[1])
@@ -144,24 +145,24 @@ class JSONResponseParser(ResponseParser):
             else:
                 return None
 
+
 class PListResponseParser(ResponseParser):
     def __init__(self):
         self.meta = "text/xml"
 
     def parse(self, xml, pvars):
 
-        #tmp = minidom.parseString(xml)
+        # tmp = minidom.parseString(xml)
 
         if sys.version_info >= (3, 0):
             pl = plistlib.readPlistFromBytes(xml.encode());
         else:
             pl = plistlib.readPlistFromString(xml);
 
-        parsed= {}
+        parsed = {}
         pvars = self.getVars(pvars)
 
-        for k,v in pvars.items():
-            parsed[k] = pl[k] if  k in pl else None
+        for k, v in pvars.items():
+            parsed[k] = pl[k] if k in pl else None
 
         return parsed;
-

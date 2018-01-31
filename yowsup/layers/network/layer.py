@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 import asyncore
 import logging
 import socket
@@ -63,7 +65,7 @@ class YowNetworkLayer(YowLayer, asyncore.dispatcher_with_send):
         self.out_buffer = bytearray()
         endpoint = self.getProp(self.__class__.PROP_ENDPOINT)
         logger.debug("Connecting to %s:%s" % endpoint)
-        if self.proxyHandler != None:
+        if self.proxyHandler is not None:
             logger.debug("HttpProxy connect: %s:%d" % endpoint)
             self.proxyHandler.connect(self, endpoint)
         else:
@@ -82,7 +84,7 @@ class YowNetworkLayer(YowLayer, asyncore.dispatcher_with_send):
     def handle_connect(self):
         self.state = self.__class__.STATE_CONNECTED
         self.connected = True
-        if self.proxyHandler != None:
+        if self.proxyHandler is not None:
             logger.debug("HttpProxy handle connect")
             self.proxyHandler.send(self)
         else:
@@ -101,7 +103,7 @@ class YowNetworkLayer(YowLayer, asyncore.dispatcher_with_send):
 
     def handle_read(self):
         readSize = self.getProp(self.__class__.PROP_NET_READSIZE, 1024)
-        if self.proxyHandler != None:
+        if self.proxyHandler is not None:
             data = self.proxyHandler.recv(self, readSize)
             logger.debug("HttpProxy handle read: %s" % data)
         else:

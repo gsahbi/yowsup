@@ -13,11 +13,25 @@ from .message import MessageProtocolEntity
 
 class DownloadableMessageProtocolEntity(MessageProtocolEntity):
 
+    def __init__(self, mimeType, fileHash, url, ip, size, fileName, mediaKey,
+                 _id=None, _from=None, to=None, notify=None, timestamp=None,
+                 participant=None, offline=None, retry=None, context=None):
+        super(DownloadableMessageProtocolEntity, self).__init__("media", _id, _from, to, notify, timestamp,
+                                                                participant, offline, retry, context)
+        self.setDownloadableMediaProps(mimeType, fileHash, url, ip, size, fileName, mediaKey)
 
-    def __init__(self, node=None):
-        super(DownloadableMessageProtocolEntity, self).__init__(node)
-        self.setDownloadableMediaProps(**node.getChild("body").data)
         self.crypt_keys = None
+
+    def setDownloadableMediaProps(self, mime_type, file_sha256, file_enc_sha256,
+                                  url, file_length, media_key, file_name=None):
+        self.mime_type = mime_type
+        self.file_hash = file_sha256
+        self.url = url
+        self.size = int(file_length)
+        self.file_enc_SHA256 = file_enc_sha256
+        self.media_key = media_key
+        self.file_name = file_name
+
 
     def __str__(self):
         out = super(DownloadableMessageProtocolEntity, self).__str__()
@@ -71,16 +85,6 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
         mediaNode.setAttribute("file_enc_sha256", self.url["file_enc_sha256"])
 
         return node
-
-    def setDownloadableMediaProps(self, mime_type, file_sha256, file_enc_sha256,
-                                  url, file_length, media_key, file_name=None, **kwargs):
-        self.mime_type = mime_type
-        self.file_hash = file_sha256
-        self.url = url
-        self.size = int(file_length)
-        self.file_enc_SHA256 = file_enc_sha256
-        self.media_key = media_key
-        self.file_name = file_name
 
 
     @staticmethod

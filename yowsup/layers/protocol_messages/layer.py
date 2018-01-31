@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 import logging
 
 from yowsup.layers import YowProtocolLayer
@@ -34,26 +36,26 @@ class YowMessagesProtocolLayer(YowProtocolLayer):
 
         if node_type == "text":
             if message["type"] == "text":
-                entity = TextMessageProtocolEntity(node)
+                entity = TextMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message["type"] == "extended_text":
-                entity = ExtendedTextMessageProtocolEntity(node)
+                entity = ExtendedTextMessageProtocolEntity.fromProtocolTreeNode(node)
 
         elif node_type == "media":
             message_type = message["type"]
             if message_type == "image":
-                entity = ImageMessageProtocolEntity(node)
+                entity = ImageMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "audio":
-                entity = AudioMessageProtocolEntity(node)
+                entity = AudioMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "video":
-                entity = VideoMessageProtocolEntity(node)
+                entity = VideoMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "document":
-                entity = DocumentMessageProtocolEntity(node)
+                entity = DocumentMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "location":
-                entity = LocationMessageProtocolEntity(node)
+                entity = LocationMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "contact":
-                entity = ContactMessageProtocolEntity(node)
+                entity = ContactMessageProtocolEntity.fromProtocolTreeNode(node)
             elif message_type == "contact_array":
-                entity = ContactMessageProtocolEntity(node)
+                entity = ContactMessageProtocolEntity.fromProtocolTreeNode(node)
             else:
                 logger.debug("Unrecognized message type %s " % message_type)
 

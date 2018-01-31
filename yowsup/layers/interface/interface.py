@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 import inspect
 import logging
 
@@ -12,6 +14,7 @@ from yowsup.layers.protocol_messages.protocolentities.iq_requestupload import Re
 
 logger = logging.getLogger(__name__)
 
+
 class ProtocolEntityCallback(object):
     def __init__(self, entityType):
         self.entityType = entityType
@@ -22,7 +25,6 @@ class ProtocolEntityCallback(object):
 
 
 class YowInterfaceLayer(YowLayer):
-
     PROP_RECONNECT_ON_STREAM_ERR = "org.openwhatsapp.yowsup.prop.interface.reconnect_on_stream_error"
 
     def __init__(self):
@@ -38,8 +40,7 @@ class YowInterfaceLayer(YowLayer):
                 fn = m[1]
                 self.entity_callbacks[fn.entity_callback] = getattr(self, fname)
 
-
-    def _sendIq(self, iqEntity, onSuccess = None, onError = None):
+    def _sendIq(self, iqEntity, onSuccess=None, onError=None):
         assert iqEntity.getTag() == "iq", "Expected *IqProtocolEntity in _sendIq, got %s" % iqEntity.getTag()
         self.iqRegistry[iqEntity.getId()] = (iqEntity, onSuccess, onError)
         self.toLower(iqEntity)
@@ -54,7 +55,7 @@ class YowInterfaceLayer(YowLayer):
                 originalIq, successClbk, errorClbk = self.iqRegistry[iq_id]
                 del self.iqRegistry[iq_id]
 
-                if entity.getType() ==  IqProtocolEntity.TYPE_RESULT and successClbk:
+                if entity.getType() == IqProtocolEntity.TYPE_RESULT and successClbk:
                     successClbk(entity, originalIq)
                 elif entity.getType() == IqProtocolEntity.TYPE_ERROR and errorClbk:
                     errorClbk(entity, originalIq)
@@ -62,7 +63,7 @@ class YowInterfaceLayer(YowLayer):
 
         return False
 
-    def getOwnJid(self, full = True):
+    def getOwnJid(self, full=True):
         return self.getLayerInterface(YowAuthenticationProtocolLayer).getUsername(full)
 
     def connect(self):
@@ -107,31 +108,39 @@ class YowInterfaceLayer(YowLayer):
             self.reconnect = False
             self.connect()
 
-    def _sendMediaMessage(self, builder, success, error = None, progress = None):
+    def _sendMediaMessage(self, builder, success, error=None, progress=None):
         # axolotlIface = self.getLayerInterface(YowAxolotlLayer)
         # if axolotlIface:
         #     axolotlIface.encryptMedia(builder)
 
         iq = RequestUploadIqProtocolEntity(builder.mediaType, filePath=builder.getFilepath(),
                                            encrypted=builder.is_encrypted())
-        successFn = lambda resultEntity, requestUploadEntity: self.__onRequestUploadSuccess(resultEntity, requestUploadEntity, builder, success, error, progress)
-        errorFn = lambda errorEntity, requestUploadEntity: self.__onRequestUploadError(errorEntity, requestUploadEntity, error)
+        successFn = lambda resultEntity, requestUploadEntity: self.__onRequestUploadSuccess(resultEntity,
+                                                                                            requestUploadEntity,
+                                                                                            builder, success, error,
+                                                                                            progress)
+        errorFn = lambda errorEntity, requestUploadEntity: self.__onRequestUploadError(errorEntity, requestUploadEntity,
+                                                                                       error)
         self._sendIq(iq, successFn, errorFn)
 
-    def __onRequestUploadSuccess(self, resultRequestUploadIqProtocolEntity, requestUploadEntity, builder, success, error = None, progress = None):
-        if(resultRequestUploadIqProtocolEntity.isDuplicate()):
-            return success(builder.build(resultRequestUploadIqProtocolEntity.getUrl(), resultRequestUploadIqProtocolEntity.getIp()))
+    def __onRequestUploadSuccess(self, resultRequestUploadIqProtocolEntity, requestUploadEntity, builder, success,
+                                 error=None, progress=None):
+        if (resultRequestUploadIqProtocolEntity.isDuplicate()):
+            return success(builder.build(resultRequestUploadIqProtocolEntity.getUrl(),
+                                         resultRequestUploadIqProtocolEntity.getIp()))
         else:
-            successFn = lambda path, jid, url: self.__onMediaUploadSuccess(builder, url, resultRequestUploadIqProtocolEntity.getIp(), success)
+            successFn = lambda path, jid, url: self.__onMediaUploadSuccess(builder, url,
+                                                                           resultRequestUploadIqProtocolEntity.getIp(),
+                                                                           success)
             errorFn = lambda path, jid, errorText: self.__onMediaUploadError(builder, errorText, error)
 
             mediaUploader = MediaUploader(builder.jid, self.getOwnJid(), builder.getFilepath(),
-                                      resultRequestUploadIqProtocolEntity.getUrl(),
-                                      resultRequestUploadIqProtocolEntity.getResumeOffset(),
-                                      successFn, errorFn, progress, async=True)
+                                          resultRequestUploadIqProtocolEntity.getUrl(),
+                                          resultRequestUploadIqProtocolEntity.getResumeOffset(),
+                                          successFn, errorFn, progress, async=True)
             mediaUploader.start()
 
-    def __onRequestUploadError(self, errorEntity, requestUploadEntity, builder, error = None):
+    def __onRequestUploadError(self, errorEntity, requestUploadEntity, builder, error=None):
         if error:
             return error(errorEntity.code, errorEntity.text, errorEntity.backoff)
 
@@ -139,7 +148,7 @@ class YowInterfaceLayer(YowLayer):
         messageNode = builder.build(url, ip)
         return successClbk(messageNode)
 
-    def __onMediaUploadError(self, builder, errorText, errorClbk = None):
+    def __onMediaUploadError(self, builder, errorText, errorClbk=None):
         if errorClbk:
             return errorClbk(0, errorText, 0)
 

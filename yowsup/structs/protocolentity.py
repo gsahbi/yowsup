@@ -1,9 +1,8 @@
-import logging
+# -*- coding utf-8 -*-
+
 import time
 
 from .protocoltreenode import ProtocolTreeNode
-
-logger = logging.getLogger(__name__)
 
 
 class ProtocolEntity(object):
@@ -33,6 +32,6 @@ class ProtocolEntity(object):
     def toProtocolTreeNode(self):
         pass
 
-    def build(self, tag):
-        self.tag = tag
-
+    @staticmethod
+    def fromProtocolTreeNode(protocolTreeNode):
+        pass

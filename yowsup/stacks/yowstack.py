@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 import asyncore
 import inspect
 import logging

@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 from yowsup.layers.axolotl.store.sqlite.liteaxolotlstore import LiteAxolotlStore
 from yowsup.layers import YowProtocolLayer
 from yowsup.common.tools import StorageTools
@@ -9,9 +11,13 @@ from axolotl.untrustedidentityexception import UntrustedIdentityException
 from yowsup.layers.axolotl.props import PROP_IDENTITY_AUTOTRUST
 
 import logging
+
 logger = logging.getLogger(__name__)
+
+
 class AxolotlBaseLayer(YowProtocolLayer):
     _DB = "axolotl.db"
+
     def __init__(self):
         super(AxolotlBaseLayer, self).__init__()
         self._store = None
@@ -46,12 +52,12 @@ class AxolotlBaseLayer(YowProtocolLayer):
         self._store = store
         self.onNewStoreSet(self._store)
 
-    def getKeysFor(self, jids, resultClbk, errorClbk = None):
+    def getKeysFor(self, jids, resultClbk, errorClbk=None):
         def onSuccess(resultNode, getKeysEntity):
             entity = ResultGetKeysIqProtocolEntity.fromProtocolTreeNode(resultNode)
             resultJids = entity.getJids()
             successJids = []
-            errorJids = {} #jid -> exception
+            errorJids = {}  # jid -> exception
 
             for jid in getKeysEntity.getJids():
                 if jid not in resultJids:

@@ -30,6 +30,12 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
         self.title = title
         self.jpeg_thumbnail = jpeg_thumbnail
 
+
+    def fromProtocolTreeNode(self, node):
+        super(ExtendedTextMessageProtocolEntity, self).__init__(node)
+        self.setExtendedTextProps(**node.getChild("body").data)
+
+
     def toProtocolTreeNode(self):
         node = super(ExtendedTextMessageProtocolEntity, self).toProtocolTreeNode()
         mediaNode = node.getChild("enc")

@@ -1,5 +1,9 @@
-from yowsup.layers import YowLayerInterface
-class YowNetworkLayerInterface(YowLayerInterface):
+# -*- coding utf-8 -*-
+
+import yowsup.layers
+
+
+class YowNetworkLayerInterface(yowsup.layers.YowLayerInterface):
     def connect(self):
         self._layer.createConnection()
 

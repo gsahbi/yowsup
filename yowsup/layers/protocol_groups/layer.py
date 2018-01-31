@@ -1,3 +1,5 @@
+# -*- coding utf-8 -*-
+
 from yowsup.layers import YowLayer, YowLayerEvent, YowProtocolLayer
 from yowsup.layers.protocol_iq.protocolentities import ErrorIqProtocolEntity
 from yowsup.layers.protocol_iq.protocolentities.iq_result import ResultIqProtocolEntity
