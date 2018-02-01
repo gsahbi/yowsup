@@ -1,3 +1,4 @@
+import inspect
 from copy import deepcopy
 
 from yowsup.layers.protocol_receipts.protocolentities import OutgoingReceiptProtocolEntity
@@ -6,13 +7,33 @@ from yowsup.structs import ProtocolEntity
 
 class MessageContext(object):
 
-    def __init__(self, stanza_id=None, participant=None,
-                 remote_jid=None, mentioned_jid=None, quoted_message=None):
-        self.stanza_id = stanza_id
-        self.participant = participant
-        self.quoted_message = quoted_message
-        self.remote_jid = remote_jid
-        self.mentioned_jid = mentioned_jid
+    def __init__(self, **kwargs):
+        self.load_properties(**kwargs)
+
+    def load_properties(self, **kwargs):
+        props = [name for name, value in vars(MessageContext).items() if isinstance(value, property)]
+        for p in props:
+            self.p = kwargs[p] if p in kwargs else None
+
+    @property
+    def stanza_id(self):
+        return self._stanza_id
+
+    @property
+    def participant(self):
+        return self._participant
+
+    @property
+    def quoted_message(self):
+        return self._quoted_message
+
+    @property
+    def remote_jid(self):
+        return self._remote_jid
+
+    @property
+    def mentioned_jid(self):
+        return self._mentioned_jid
 
     def __str__(self):
 
@@ -51,139 +72,179 @@ class MessageContext(object):
         else:
             return None
 
-    def get_participant(self):
-        return self.participant
-
-    def get_stanza_id(self):
-        return self.stanza_id
-
 
 class MessageProtocolEntity(ProtocolEntity):
 
-    def __init__(self, _type, _id=None, _from=None, to=None, notify=None, timestamp=None,
-                 participant=None, offline=None, retry=None, context=None):
+    def __init__(self, ptn=None, **kwargs):
 
-        assert (to or _from), "Must specify either to or _from jids to create the message"
-        assert not (to and _from), "Can't set both attributes to message at same time (to, _from)"
+        super().__init__(tag="message")
+        if ptn:
+            MessageProtocolEntity.fromProtocolTreeNode(self, ptn)
+        else:
+            MessageProtocolEntity.load_properties(self, **kwargs)
 
-        super(MessageProtocolEntity, self).__init__("message")
-        self._type = _type
-        self._id = self._generateId() if _id is None else _id
-        self._from = _from
-        self.to = to
-        self.timestamp = int(timestamp) if timestamp else self._getCurrentTimestamp()
-        self.notify = notify
-        self.offline = offline == "1" if offline is not None else offline
-        self.retry = int(retry) if retry else None
-        self.participant = participant
-        self.context = context
+        assert (self.sender or self.destination), "Must specify either to or _from jids to create the message"
+        assert not (self.sender and self.destination), "Can't set both attributes to message at same time (to, _from)"
 
-    def getType(self):
-        return self._type
+    def load_properties(self, **kwargs):
+        stack = inspect.stack()
+        caller_class = stack[1][0].f_locals['__class__']
+        props = [name for name, value in vars(caller_class).items() if isinstance(value, property)]
+        for p in props:
+            setattr(self, p, kwargs[p] if p in kwargs else None)
 
-    def getContext(self):
-        return self.context
+    @property
+    def participant(self):
+        return self._participant
 
-    def getId(self):
-        return self._id
+    @participant.setter
+    def participant(self, v):
+        self._participant = v
 
-    def getTimestamp(self):
-        return self.timestamp
+    @property
+    def destination(self):
+        return self._destination
 
-    def getFrom(self, full=True):
-        return self._from if full else self._from.split('@')[0]
+    @destination.setter
+    def destination(self, v):
+        self._destination = v
+
+    @property
+    def retry(self):
+        return self._retry
+
+    @retry.setter
+    def retry(self, v):
+        self._retry = int(v) if v else None
+
+    @property
+    def offline(self):
+        return self._offline
+
+    @offline.setter
+    def offline(self, v=None):
+        self._offline = v == "1" if v is not None else v
+
+    @property
+    def notify(self):
+        return self._notify
+
+    @notify.setter
+    def notify(self, v):
+        self._notify = v
+
+    @property
+    def timestamp(self):
+        return self._timestamp
+
+    @timestamp.setter
+    def timestamp(self, t=None):
+        self._timestamp = int(t) if t else self._getCurrentTimestamp()
+
+    @property
+    def sender(self):
+        return self._sender
+
+    @sender.setter
+    def sender(self, v):
+        self._sender = v
+
+    @property
+    def message_id(self):
+        return self._message_id
+
+    @message_id.setter
+    def message_id(self, v=None):
+        self._message_id = self._generateId() if v is None else v
+
+    @property
+    def content_type(self):
+        return self._content_type
+
+    @content_type.setter
+    def content_type(self, v):
+        self._content_type = v
+
+    @property
+    def context(self):
+        return self._context
+
+    @context.setter
+    def context(self, v):
+        self._context = MessageContext(**v) if v is not None else None
 
     # TODO : Implement broadcast
-    def isBroadcast(self):
-        return False
+    # TODO : Remove most of the boilerplate by leveraging docstring property as a mapping string
 
-    def getTo(self, full=True):
-        return self.to if full else self.to.split('@')[0]
-
-    def getParticipant(self, full=True):
-        return self.participant if full else self.participant.split('@')[0]
-
-    def getAuthor(self, full=True):
-        return self.getParticipant(full) if self.isGroupMessage() else self.getFrom(full)
-
-    def getNotify(self):
-        return self.notify
+    def getAuthor(self):
+        return self.participant if self.isGroupMessage() else self.sender
 
     def isOutgoing(self):
-        return self._from is None
+        return self.sender is None
 
     def isGroupMessage(self):
         if self.isOutgoing():
-            return "-" in self.to
+            return "-" in self.destination
         return self.participant is not None
 
     def __str__(self):
         out = "Message:\n"
-        out += "ID: %s\n" % self._id
-        out += "To: %s\n" % self.to if self.isOutgoing() else "From: %s\n" % self._from
-        out += "Type:  %s\n" % self._type
+        out += "ID: %s\n" % self.message_id
+        out += ("To: %s\n" % self.destination if self.isOutgoing() else "From: %s\n" % self.sender)
+        out += "Type:  %s\n" % self.content_type
         out += "Timestamp: %s\n" % self.timestamp
         if self.participant:
             out += "Participant: %s\n" % self.participant
         return out
 
     def ack(self, read=False):
-        return OutgoingReceiptProtocolEntity(self.getId(), self.getFrom(), read,
-                                             participant=self.getParticipant())
+        return OutgoingReceiptProtocolEntity(self.message_id, self.sender, read, participant=self.participant)
 
-    def forward(self, to, _id=None):
+    def forward(self, destination, message_id=None):
         OutgoingMessage = deepcopy(self)
-        OutgoingMessage.to = to
-        OutgoingMessage._from = None
-        OutgoingMessage._id = self._generateId() if _id is None else _id
+        OutgoingMessage.destination = destination
+        OutgoingMessage.sender = None
+        OutgoingMessage.message_id = message_id
         return OutgoingMessage
 
-    @staticmethod
-    def fromProtocolTreeNode(node):
+    def fromProtocolTreeNode(self, node):
 
-        context = None
         body = node.getChild('body')
         if body is not None and 'context_info' in body.data:
-            context = MessageContext(**body.data['context_info'])
+            self.context = body.data['context_info']
+        else:
+            self.context = None
 
-        return MessageProtocolEntity(
-            node["type"],
-            node["id"],
-            node["from"],
-            node["to"],
-            node["notify"],
-            node["t"],
-            node["participant"],
-            node["offline"],
-            node["retry"],
-            context
-        )
+        self.content_type = node["type"]
+        self.message_id = node["id"]
+        self.sender = node["from"]
+        self.destination = node["to"]
+        self.notify = node["notify"]
+        self.timestamp = node["t"]
+        self.participant = node["participant"]
+        self.offline = node["offline"]
+        self.retry = node["retry"]
 
     def toProtocolTreeNode(self):
         attribs = {
-            "type": self._type,
-            "id": self._id,
+            "type": self.content_type,
+            "id": self.message_id,
         }
 
         if self.isOutgoing():
-            attribs["to"] = self.to
+            attribs["to"] = self.destination
         else:
-            attribs["from"] = self._from
+            attribs["from"] = self.sender
 
-            attribs["t"] = str(self.timestamp)
+        attribs["t"] = str(self.timestamp)
 
-            if self.offline is not None:
-                attribs["offline"] = "1" if self.offline else "0"
-            if self.notify:
-                attribs["notify"] = self.notify
-            if self.retry:
-                attribs["retry"] = str(self.retry)
-            if self.participant:
-                attribs["participant"] = self.participant
+        if self.offline is not None:
+            attribs["offline"] = "1" if self.offline else "0"
+        if self.notify:
+            attribs["notify"] = self.notify
+        if self.retry:
+            attribs["retry"] = str(self.retry)
+        if self.participant:
+            attribs["participant"] = self.participant
 
-        xNode = None
-        # if self.isOutgoing():
-        #    serverNode = ProtocolTreeNode("server", {})
-        #    xNode = ProtocolTreeNode("x", {"xmlns": "jabber:x:event"}, [serverNode])
-
-        return self._createProtocolTreeNode(attribs, children=[xNode] if xNode else None, data=None)
+        return self._createProtocolTreeNode(attribs, children=None, data=None)

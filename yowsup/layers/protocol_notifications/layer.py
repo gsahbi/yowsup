@@ -15,7 +15,7 @@ class YowNotificationsProtocolLayer(YowProtocolLayer):
         return "notification Ib Layer"
 
     def sendNotification(self, entity):
-        if entity.getTag() == "notification":
+        if entity.tag == "notification":
             self.toLower(entity.toProtocolTreeNode())
 
     def recvNotification(self, node):

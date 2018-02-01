@@ -11,20 +11,24 @@ HEX:33089eb3c90312210510e0196be72fe65913c6a84e75a54f40a3ee290574d6a23f408df990e7
 </message>
     """
 
-    def __init__(self, encEntities, _type, _id=None, _from=None, to=None, notify=None, timestamp=None,
-                 participant=None, offline=None, retry=None):
-        super(EncryptedMessageProtocolEntity, self).__init__(_type, _id=_id, _from=_from, to=to, notify=notify,
-                                                             timestamp=timestamp, participant=participant,
-                                                             offline=offline,
-                                                             retry=retry)
-        self.setEncEntities(encEntities)
+    def __init__(self, ptn=None, _encEntities=None,  **kwargs):
+        super(EncryptedMessageProtocolEntity, self).__init__(ptn, **kwargs)
+        if ptn and _encEntities is None:
+            _encEntities = [EncProtocolEntity.fromProtocolTreeNode(encNode) for encNode in ptn.getAllChildren("enc")]
 
-    def setEncEntities(self, encEntities):
-        assert len(encEntities), "Must have at least 1 enc entity"
-        self.encEntities = encEntities
+        self.encEntities = _encEntities
+
+    @property
+    def encEntities(self): return self._encEntities
+
+    @encEntities.setter
+    def encEntities(self, v):
+        assert len(v), "Must have at least 1 enc entity"
+        self._encEntities = v
+
 
     def getEnc(self, encType):
-        for enc in self.encEntities:
+        for enc in self._encEntities:
             if enc.type == encType:
                 return enc
 
@@ -43,10 +47,3 @@ HEX:33089eb3c90312210510e0196be72fe65913c6a84e75a54f40a3ee290574d6a23f408df990e7
 
         return node
 
-    @staticmethod
-    def fromProtocolTreeNode(node):
-        entity = MessageProtocolEntity.fromProtocolTreeNode(node)
-        entity.__class__ = EncryptedMessageProtocolEntity
-        entity.setEncEntities(
-            [EncProtocolEntity.fromProtocolTreeNode(encNode) for encNode in node.getAllChildren("enc")])
-        return entity

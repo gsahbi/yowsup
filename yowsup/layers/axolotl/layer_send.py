@@ -199,17 +199,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
                 return self.sentQueue.pop(i)
 
     def sendEncEntities(self, node, encEntities):
-        mediaType = None
-        messageEntity = EncryptedMessageProtocolEntity(encEntities,
-                                           "text" if not mediaType else "media",
-                                           _id=node["id"],
-                                           to=node["to"],
-                                           notify=node["notify"],
-                                           timestamp=node["timestamp"],
-                                           participant=node["participant"],
-                                           offline=node["offline"],
-                                           retry=node["retry"]
-                                           )
+        messageEntity = EncryptedMessageProtocolEntity(node, encEntities)
         self.enqueueSent(node)
         self.toLower(messageEntity.toProtocolTreeNode())
 

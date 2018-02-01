@@ -16,7 +16,7 @@ class YowCallsProtocolLayer(YowProtocolLayer):
         return "call Layer"
 
     def sendCall(self, entity):
-        if entity.getTag() == "call":
+        if entity.tag == "call":
             self.toLower(entity.toProtocolTreeNode())
 
     def recvCall(self, node):

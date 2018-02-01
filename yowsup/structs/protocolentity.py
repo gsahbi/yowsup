@@ -11,14 +11,15 @@ class ProtocolEntity(object):
     def __init__(self, tag):
         self.tag = tag
 
-    def getTag(self):
-        return self.tag
+    @property
+    def tag(self): return self._tag
 
-    def isType(self, typ):
-        return self.tag == typ
+    @tag.setter
+    def tag(self, v): self._tag = v
+
 
     def _createProtocolTreeNode(self, attributes, children=None, data=None):
-        return ProtocolTreeNode(self.getTag(), attributes, children, data)
+        return ProtocolTreeNode(self.tag, attributes, children, data)
 
     @staticmethod
     def _getCurrentTimestamp():

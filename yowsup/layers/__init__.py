@@ -135,8 +135,8 @@ class YowProtocolLayer(YowLayer):
                     recv(node)
 
     def send(self, entity):
-        if entity.getTag() in self.handleMap:
-            _, send = self.handleMap[entity.getTag()]
+        if entity.tag in self.handleMap:
+            _, send = self.handleMap[entity.tag]
             if send:
                 send(entity)
 
@@ -269,7 +269,7 @@ class YowProtocolLayerTest(YowLayerTest):
         try:
             self.assertEqual(entity.toProtocolTreeNode(), self.lowerSink.pop())
         except IndexError:
-            raise AssertionError("Entity '%s' was not sent through this layer" % (entity.getTag()))
+            raise AssertionError("Entity '%s' was not sent through this layer" % entity.tag)
 
     def assertReceived(self, entity):
         node = entity.toProtocolTreeNode()
@@ -277,4 +277,4 @@ class YowProtocolLayerTest(YowLayerTest):
         try:
             self.assertEqual(node, self.upperSink.pop().toProtocolTreeNode())
         except IndexError:
-            raise AssertionError("'%s' was not received through this layer" % (entity.getTag()))
+            raise AssertionError("'%s' was not received through this layer" % entity.tag)

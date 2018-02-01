@@ -41,7 +41,7 @@ class YowInterfaceLayer(YowLayer):
                 self.entity_callbacks[fn.entity_callback] = getattr(self, fname)
 
     def _sendIq(self, iqEntity, onSuccess=None, onError=None):
-        assert iqEntity.getTag() == "iq", "Expected *IqProtocolEntity in _sendIq, got %s" % iqEntity.getTag()
+        assert iqEntity.tag == "iq", "Expected *IqProtocolEntity in _sendIq, got %s" % iqEntity.tag
         self.iqRegistry[iqEntity.getId()] = (iqEntity, onSuccess, onError)
         self.toLower(iqEntity)
 
@@ -49,7 +49,7 @@ class YowInterfaceLayer(YowLayer):
         """
         :type entity: IqProtocolEntity
         """
-        if entity.getTag() == "iq":
+        if entity.tag == "iq":
             iq_id = entity.getId()
             if iq_id in self.iqRegistry:
                 originalIq, successClbk, errorClbk = self.iqRegistry[iq_id]
@@ -78,7 +78,7 @@ class YowInterfaceLayer(YowLayer):
 
     def receive(self, entity):
         if not self.processIqRegistry(entity):
-            entityType = entity.getTag()
+            entityType = entity.tag
             if entityType in self.entity_callbacks:
                 self.entity_callbacks[entityType](entity)
             else:

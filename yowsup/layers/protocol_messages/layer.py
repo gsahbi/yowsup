@@ -25,18 +25,18 @@ class YowMessagesProtocolLayer(YowProtocolLayer):
         return "Messages Layer"
 
     def sendMessageEntity(self, entity):
-        if entity.getType() == "text":
+        logger.debug("Sending " + str(entity))
+        if entity.content_type == "text":
             self.entityToLower(entity)
 
     def recvMessageStanza(self, node):
-
         message = node.getChild("body")
         node_type = node["type"]
         entity = None
 
         if node_type == "text":
             if message["type"] == "text":
-                entity = TextMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = TextMessageProtocolEntity(node)
             elif message["type"] == "extended_text":
                 entity = ExtendedTextMessageProtocolEntity.fromProtocolTreeNode(node)
 
