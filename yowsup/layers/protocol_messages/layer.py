@@ -26,8 +26,8 @@ class YowMessagesProtocolLayer(YowProtocolLayer):
 
     def sendMessageEntity(self, entity):
         logger.debug("Sending " + str(entity))
-        if entity.content_type == "text":
-            self.entityToLower(entity)
+        # if entity.message_type == "text":
+        self.entityToLower(entity)
 
     def recvMessageStanza(self, node):
         message = node.getChild("body")
@@ -38,24 +38,26 @@ class YowMessagesProtocolLayer(YowProtocolLayer):
             if message["type"] == "text":
                 entity = TextMessageProtocolEntity(node)
             elif message["type"] == "extended_text":
-                entity = ExtendedTextMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = ExtendedTextMessageProtocolEntity(node)
 
         elif node_type == "media":
             message_type = message["type"]
-            if message_type == "image":
-                entity = ImageMessageProtocolEntity.fromProtocolTreeNode(node)
+            if message["type"] == "extended_text":
+                entity = ExtendedTextMessageProtocolEntity(node)
+            elif message_type == "image":
+                entity = ImageMessageProtocolEntity(node)
             elif message_type == "audio":
-                entity = AudioMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = AudioMessageProtocolEntity(node)
             elif message_type == "video":
-                entity = VideoMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = VideoMessageProtocolEntity(node)
             elif message_type == "document":
-                entity = DocumentMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = DocumentMessageProtocolEntity(node)
             elif message_type == "location":
-                entity = LocationMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = LocationMessageProtocolEntity(node)
             elif message_type == "contact":
-                entity = ContactMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = ContactMessageProtocolEntity(node)
             elif message_type == "contact_array":
-                entity = ContactMessageProtocolEntity.fromProtocolTreeNode(node)
+                entity = ContactMessageProtocolEntity(node)
             else:
                 logger.debug("Unrecognized message type %s " % message_type)
 

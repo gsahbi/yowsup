@@ -158,12 +158,12 @@ class MessageProtocolEntity(ProtocolEntity):
         self._message_id = self._generateId() if v is None else v
 
     @property
-    def content_type(self):
-        return self._content_type
+    def message_type(self):  # media or text
+        return self._message_type
 
-    @content_type.setter
-    def content_type(self, v):
-        self._content_type = v
+    @message_type.setter
+    def message_type(self, v):
+        self._message_type = v
 
     @property
     def context(self):
@@ -191,7 +191,7 @@ class MessageProtocolEntity(ProtocolEntity):
         out = "Message:\n"
         out += "ID: %s\n" % self.message_id
         out += ("To: %s\n" % self.destination if self.isOutgoing() else "From: %s\n" % self.sender)
-        out += "Type:  %s\n" % self.content_type
+        out += "Type:  %s\n" % self.message_type
         out += "Timestamp: %s\n" % self.timestamp
         if self.participant:
             out += "Participant: %s\n" % self.participant
@@ -215,7 +215,7 @@ class MessageProtocolEntity(ProtocolEntity):
         else:
             self.context = None
 
-        self.content_type = node["type"]
+        self.message_type = node["type"]
         self.message_id = node["id"]
         self.sender = node["from"]
         self.destination = node["to"]
@@ -227,7 +227,7 @@ class MessageProtocolEntity(ProtocolEntity):
 
     def toProtocolTreeNode(self):
         attribs = {
-            "type": self.content_type,
+            "type": self.message_type,
             "id": self.message_id,
         }
 

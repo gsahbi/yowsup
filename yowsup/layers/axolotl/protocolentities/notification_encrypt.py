@@ -1,6 +1,8 @@
 from yowsup.common import YowConstants
 from yowsup.layers.protocol_notifications.protocolentities import NotificationProtocolEntity
 from yowsup.structs import ProtocolTreeNode
+
+
 class EncryptNotification(NotificationProtocolEntity):
     """
     <notification t="1419824928" id="2451228097" from="s.whatsapp.net" type="encrypt">
@@ -9,8 +11,10 @@ class EncryptNotification(NotificationProtocolEntity):
     </notification>
     """
     count = 9
-    def __init__(self, count, timestamp, _id = None, notify = None, offline = None):
-        super(EncryptNotification, self).__init__("encrypt", _id, YowConstants.WHATSAPP_SERVER, timestamp, notify, offline)
+
+    def __init__(self, count, timestamp=0, _id=None, notify=None, offline=None):
+        super(EncryptNotification, self).__init__("encrypt", _id, YowConstants.WHATSAPP_SERVER, timestamp, notify,
+                                                  offline)
         self.setProps(count)
 
     def setProps(self, count):
@@ -29,5 +33,5 @@ class EncryptNotification(NotificationProtocolEntity):
     def fromProtocolTreeNode(node):
         entity = NotificationProtocolEntity.fromProtocolTreeNode(node)
         entity.__class__ = EncryptNotification
-        #entity.setProps(node.getChild("count")["value"])
+        # entity.setProps(node.getChild("count")["value"])
         return entity

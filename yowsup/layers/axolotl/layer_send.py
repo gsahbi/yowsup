@@ -107,7 +107,6 @@ class AxolotlSendLayer(AxolotlBaseLayer):
             self.toLower(node)
 
     def send(self, node):
-        # if node.tag == "message" and node["to"] not in self.skipEncJids and not node.getChild("enc") or (node.getChild("media") and node.getChild("media")["mediakey"]):
         if node.tag == "message" and node["to"] not in self.skipEncJids and not node.getChild("enc"):
             self.processPlaintextNodeAndSend(node)
         # elif node.tag == "iq" and node["xmlns"] == "w:m":
@@ -187,7 +186,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
 
     def enqueueSent(self, node):
         if len(self.sentQueue) >= self.__class__.MAX_SENT_QUEUE:
-            logger.warn("Discarding queued node without receipt")
+            logger.warning("Discarding queued node without receipt")
             self.sentQueue.pop(0)
         self.sentQueue.append(node)
 
