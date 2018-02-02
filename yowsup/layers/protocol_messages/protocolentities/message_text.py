@@ -25,7 +25,7 @@ class TextMessageProtocolEntity(MessageProtocolEntity):
 
     def toProtocolTreeNode(self):
         node = super().toProtocolTreeNode()
-        bodyNode = ProtocolTreeNode("body", {}, None, self.text)
+        bodyNode = ProtocolTreeNode("body", {'type': 'text'}, None, self.text)
         node.addChild(bodyNode)
         return node
 

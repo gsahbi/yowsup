@@ -71,7 +71,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
 
     # handling received data #####
     def onEncryptNotification(self, protocolTreeNode):
-        entity = EncryptNotification(protocolTreeNode)
+        entity = EncryptNotification.fromProtocolTreeNode(protocolTreeNode)
         ack = OutgoingAckProtocolEntity(protocolTreeNode["id"], "notification", protocolTreeNode["type"],
                                         protocolTreeNode["from"])
         self.toLower(ack.toProtocolTreeNode())
