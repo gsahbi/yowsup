@@ -47,7 +47,7 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
         self._jpeg_thumbnail = v
 
     def __str__(self):
-        out = super(ImageMessageProtocolEntity, self).__str__()
+        out = super().__str__()
         out += "Width: %s\n" % self.width
         out += "Height: %s\n" % self.height
         if self.caption:
@@ -64,8 +64,6 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
         self.caption = data["caption"] if "caption" in data else None
         self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 
-    def getCaption(self):
-        return self.caption
 
     def toProtocolTreeNode(self):
         node = super().toProtocolTreeNode()

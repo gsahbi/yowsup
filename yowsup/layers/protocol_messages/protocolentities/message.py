@@ -165,6 +165,15 @@ class MessageProtocolEntity(ProtocolEntity):
     def message_type(self, v):
         self._message_type = v
 
+
+    @property
+    def media_type(self): return self._media_type
+
+    @media_type.setter
+    def media_type(self, v):
+        self._media_type = v
+
+
     @property
     def context(self):
         return self._context
@@ -205,11 +214,13 @@ class MessageProtocolEntity(ProtocolEntity):
         OutgoingMessage.destination = destination
         OutgoingMessage.sender = None
         OutgoingMessage.notify = None
-        OutgoingMessage.participant = None #"21626554655@s.whatsapp.net" # self.getLayerInterface(YowAuthenticationProtocolLayer).getUsername(True)
+        OutgoingMessage.participant = None
         OutgoingMessage.message_id = message_id
         return OutgoingMessage
 
     def fromProtocolTreeNode(self, node):
+        enc = node.getChild("enc")
+        self.media_type = enc["mediatype"] if enc else None
 
         body = node.getChild('body')
         if body is not None and 'context_info' in body.data:

@@ -19,15 +19,6 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
 
         self.crypt_keys = None
 
-    @property
-    def media_type(self): return self._media_type
-
-    @media_type.setter
-    def media_type(self, v):
-        assert v == 'video', "How come ?"
-        self._media_type = v
-
-
 
     @property
     def url(self): return self._url
@@ -77,7 +68,7 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
         self._file_enc_sha256 = v
 
     def __str__(self):
-        out = super(DownloadableMessageProtocolEntity, self).__str__()
+        out = super().__str__()
         out += "MimeType: %s\n" % self.mime_type
         out += "File Hash: %s\n" % self.file_sha256
         out += "URL: %s\n" % self.url
@@ -118,16 +109,14 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
             'file_enc_sha256': self.file_enc_sha256
         }
 
-        bodyNode = ProtocolTreeNode("body", {}, None, data)
+        bodyNode = ProtocolTreeNode("body", {"mediatype": self.media_type}, None, data)
         node.addChild(bodyNode)
         return node
 
     def fromProtocolTreeNode(self, node):
         body = node.getChild("body")
-        enc = node.getChild("enc")
         data = body.getData()
 
-        self.media_type = enc["mediatype"] if enc else None
         self.media_key = data["media_key"] if "media_key" in data else None
         self.mime_type = data["mime_type"] if "mime_type" in data else None
         self.url = data["url"] if "url" in data else None

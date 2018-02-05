@@ -79,9 +79,7 @@ class VideoMessageProtocolEntity(DownloadableMessageProtocolEntity):
 
         node = super().toProtocolTreeNode()
         bodyNode = node.getChild("body") or ProtocolTreeNode("body", {}, None, None)
-
         bodyNode["type"] = "video"
-        bodyNode["mediatype"] = "video"
 
         data = {
             "height": self.height,
