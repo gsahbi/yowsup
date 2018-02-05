@@ -1,18 +1,50 @@
+from yowsup.structs import ProtocolTreeNode
+
 from yowsup.common.tools import ImageTools
-from yowsup.layers.protocol_messages.proto.wa_pb2 import ImageMessage
-from .builder_message_media_downloadable import DownloadableMediaMessageBuilder
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 
 class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
 
-    crypt_keys = '576861747341707020496d616765204b657973'
+    def __init__(self, ptn=None, **kwargs):
+        super().__init__(ptn, **kwargs)
+        if ptn:
+            ImageMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
+        else:
+            ImageMessageProtocolEntity.load_properties(self, **kwargs)
+        self.crypt_keys = '576861747341707020566964656f204b657973'
 
-    def __init__(self, node):
+    @property
+    def height(self):
+        return self._height
 
-        super(ImageMessageProtocolEntity, self).__init__(node)
-        self.setImageProps(**node.getChild("body").data)
+    @height.setter
+    def height(self, v):
+        self._height = int(v)
 
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, v):
+        self._width = int(v)
+
+    @property
+    def caption(self):
+        return self._caption
+
+    @caption.setter
+    def caption(self, v):
+        self._caption = v
+
+    @property
+    def jpeg_thumbnail(self):
+        return self._jpeg_thumbnail
+
+    @jpeg_thumbnail.setter
+    def jpeg_thumbnail(self, v):
+        self._jpeg_thumbnail = v
 
     def __str__(self):
         out = super(ImageMessageProtocolEntity, self).__str__()
@@ -22,66 +54,46 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
             out += "Caption: %s\n" % self.caption
         return out
 
-    def setImageProps(self, jpeg_thumbnail=None, width='0', height='0', caption=None, **kwargs):
-        self.jpeg_thumbnail = jpeg_thumbnail
-        self.width = int(width)
-        self.height = int(height)
-        self.caption = caption
+    def fromProtocolTreeNode(self, node):
+        body = node.getChild("body")
+        assert body is not None and body["type"] == "image", "Called with wrong body payload"
+        data = body.getData()
 
+        self.width = data["width"] if "width" in data else None
+        self.height = data["height"] if "height" in data else None
+        self.caption = data["caption"] if "caption" in data else None
+        self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 
     def getCaption(self):
         return self.caption
 
     def toProtocolTreeNode(self):
-        node = super(ImageMessageProtocolEntity, self).toProtocolTreeNode()
-        mediaNode = node.getChild("enc")
+        node = super().toProtocolTreeNode()
+        bodyNode = node.getChild("body") or ProtocolTreeNode("body", {}, None, None)
 
-        mediaNode.setAttribute("width", str(self.width))
-        mediaNode.setAttribute("height", str(self.height))
-        if self.caption:
-            mediaNode.setAttribute("caption", self.caption)
+        bodyNode["type"] = "image"
+        bodyNode["mediatype"] = "image"
+
+        data = {
+            "heigh": self.height,
+            "width": self.width,
+            "jpeg_thumbnail": self.jpeg_thumbnail
+        }
+
+        if self.caption is not None:
+            data["caption"] = str(self.caption)
+
+        data = {**bodyNode.getData(), **data}
+        bodyNode.setData(data)
 
         return node
 
-    def toProtobufMessage(self):
-        image_message = ImageMessage()
-        image_message.url = self.url
-        image_message.width = self.width
-        image_message.height = self.height
-        image_message.mime_type = self.mimeType
-        image_message.file_sha256 = self.fileHash
-        image_message.file_length = self.size
-        image_message.caption = self.caption
-        image_message.jpeg_thumbnail = self.preview
-        image_message.media_key = self.mediaKey
-
-        return image_message
-
     @staticmethod
-    def getBuilder(jid, filepath):
-        return DownloadableMediaMessageBuilder(ImageMessageProtocolEntity, jid, filepath)
+    def fromFilePath(fpath, caption=None):
 
-    @staticmethod
-    def fromBuilder(builder):
-        builder.getOrSet("preview", lambda: ImageTools.generatePreviewFromImage(builder.getOriginalFilepath()))
-        filepath = builder.getFilepath()
-        caption = builder.get("caption")
-        mimeType = builder.get("mimetype")
-        dimensions = builder.get("dimensions", ImageTools.getImageDimensions(builder.getOriginalFilepath()))
+        preview = ImageTools.generatePreviewFromImage(fpath)
+        dimensions = ImageTools.getImageDimensions(fpath)
         assert dimensions, "Could not determine image dimensions"
         width, height = dimensions
-
-        entity = DownloadableMessageProtocolEntity.fromBuilder(builder)
-        entity.__class__ = builder.cls
-        entity.setImageProps("raw", width, height, caption)
+        entity = DownloadableMessageProtocolEntity("raw", width, height, caption)
         return entity
-
-    @staticmethod
-    def fromFilePath(path, url, ip, to, mimeType=None, caption=None, dimensions=None):
-        builder = ImageMessageProtocolEntity.getBuilder(to, path)
-        builder.set("url", url)
-        builder.set("ip", ip)
-        builder.set("caption", caption)
-        builder.set("mimetype", mimeType)
-        builder.set("dimensions", dimensions)
-        return ImageMessageProtocolEntity.fromBuilder(builder)

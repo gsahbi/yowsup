@@ -3,7 +3,6 @@ from yowsup.structs import ProtocolTreeNode
 
 
 class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
-    media_type = 'extended_text'
 
     def __init__(self, ptn=None, **kwargs):
         super().__init__(ptn, **kwargs)
@@ -16,6 +15,7 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
     def __str__(self):
         out = super(ExtendedTextMessageProtocolEntity, self).__str__()
         out += "Text: %s\n" % self.text
+        out += "Media Type: %s\n" % self.media_type
         out += "Matched Text: %s\n" % self.matched_text
         out += "Canonical URL: %s\n" % self.canonical_url
         out += "Title: %s\n" % self.title
@@ -28,6 +28,14 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
 
     @text.setter
     def text(self, v): self._text = v
+
+
+
+    @property
+    def media_type(self): return self._media_type
+
+    @media_type.setter
+    def media_type(self, v): self._media_type = v
 
 
 
@@ -70,9 +78,11 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
 
     def fromProtocolTreeNode(self, node):
         body = node.getChild("body")
+        enc = node.getChild("enc")
         assert body is not None and body["type"] == "extended_text", "Called with wrong body payload"
         data = body.getData()
 
+        self.media_type = enc["mediatype"] if enc else None
         self.matched_text = data["matched_text"] if "matched_text" in data else None
         self.canonical_url = data["canonical_url"] if "canonical_url" in data else None
         self.description = data["description"] if "description" in data else None
@@ -83,7 +93,7 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
     def toProtocolTreeNode(self):
         node = super().toProtocolTreeNode()
 
-        attribs = {
+        data = {
             'text': self.text,
             'matched_text': self.matched_text,
             'canonical_url': self.canonical_url,
@@ -91,6 +101,11 @@ class ExtendedTextMessageProtocolEntity(MessageProtocolEntity):
             'title': self.title,
             'jpeg_thumbnail': self.jpeg_thumbnail,
         }
-        bodyNode = ProtocolTreeNode("body", {"type": "extended_text"}, None, attribs)
+
+        attribs = {"type": "extended_text"}
+        if self.media_type:
+            attribs["mediatype"] = self.media_type
+
+        bodyNode = ProtocolTreeNode("body", attribs, None, data)
         node.addChild(bodyNode)
         return node

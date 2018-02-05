@@ -2,6 +2,7 @@
 import logging
 from random import randint
 
+import os
 from axolotl.axolotladdress import AxolotlAddress
 from axolotl.groups.groupcipher import GroupCipher
 from axolotl.groups.groupsessionbuilder import GroupSessionBuilder
@@ -67,8 +68,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
                 groupInfoIq = InfoGroupsIqProtocolEntity(Jid.normalize(node["to"]))
                 self._sendIq(groupInfoIq, getResultNodes)
             else:
-                serialized = self.serializeNode(node)
-                messageData = dict_to_protobuf("message", serialized).SerializeToString()
+                messageData = self.serializeToProtobuf(node)
                 if messageData:
                     if not self.store.containsSession(recipient_id, 1):
                         def on_get_keys(successJids, _b):
@@ -80,7 +80,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
                         self.getKeysFor([node["to"]], on_get_keys, lambda: self.toLower(node))
                     else:
                         sessionCipher = self.getSessionCipher(recipient_id)
-                        messageData = messageData.SerializeToString() + self.getPadding()
+                        messageData = messageData + self.getPadding()
                         ciphertext = sessionCipher.encrypt(messageData)
                         mediaType = node.getChild("enc")["type"] if node.getChild("enc") else None
                         if ciphertext.__class__ == WhisperMessage:
@@ -111,7 +111,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
 
     def send(self, node):
         if node.tag == "message" and node["to"] not in self.skipEncJids and not node.getChild("enc"):
-            self.processPlaintextNodeAndSend(node)
+            self.processMessageAndSend(node)
         elif node.getChild("enc"):
             self.handleEncNode(node)
         else:
@@ -135,14 +135,15 @@ class AxolotlSendLayer(AxolotlBaseLayer):
                     self.toLower(retryReceiptEntity.ack().toProtocolTreeNode())
                     self.getKeysFor(
                         [protocolTreeNode["participant"] or protocolTreeNode["from"]],
-                        lambda successJids, b: self.processPlaintextNodeAndSend(messageNode, retryReceiptEntity) if len(
-                            successJids) == 1 else None
+                        lambda successJids, b: self.processMessageAndSend(messageNode, retryReceiptEntity) if len(
+                            successJids) == 1 else None,
+                        errorClbk=lambda errorNode, getKeysEntity: logger.error("Failed at getting keys during retry")
                     )
                 else:
                     # not interested in any non retry receipts, bubble upwards
                     self.toUpper(protocolTreeNode)
 
-    def processPlaintextNodeAndSend(self, node, retryReceiptEntity=None):
+    def processMessageAndSend(self, node, retryReceiptEntity=None):
         recipient_id = node["to"].split('@')[0]
         isGroup = "-" in recipient_id
 
@@ -176,11 +177,9 @@ class AxolotlSendLayer(AxolotlBaseLayer):
     def sendToContact(self, node):
         recipient_id = node["to"].split('@')[0]
         cipher = self.getSessionCipher(recipient_id)
-        serialized = self.serializeNode(node)
-        messageData = dict_to_protobuf(Message(), serialized).SerializeToString() + self.getPadding()
-
+        messageData = self.serializeToProtobuf(node) + self.getPadding()
         ciphertext = cipher.encrypt(messageData)
-        mediaType = node.getChild("media")["type"] if node.getChild("media") else None
+        mediaType = node.getChild("body")["mediatype"] if node.getChild("body") else None
 
         return self.sendEncEntities(node, [EncProtocolEntity(
             EncProtocolEntity.TYPE_MSG if ciphertext.__class__ == WhisperMessage else EncProtocolEntity.TYPE_PKMSG, 2,
@@ -197,14 +196,9 @@ class AxolotlSendLayer(AxolotlBaseLayer):
             senderKeyDistributionMessage = self.groupSessionBuilder.create(senderKeyName)
             for jid in jidsNeedSenderKey:
                 sessionCipher = self.getSessionCipher(jid.split('@')[0])
-                serialized = self.serializeSKDM(node["to"], senderKeyDistributionMessage)
-
-                if retryCount > 0:
-                    # merge node payload as well
-                    serialized = {**serialized, **(self.serializeNode(node))}
-
-                message = dict_to_protobuf(Message(), serialized)
-                ciphertext = sessionCipher.encrypt(message.SerializeToString() + self.getPadding())
+                skdm = self.serializeSKDM(node["to"], senderKeyDistributionMessage)
+                message = self.serializeToProtobuf(node if retryCount > 0 else None, skdm)
+                ciphertext = sessionCipher.encrypt(message + self.getPadding())
                 if ciphertext.__class__ == WhisperMessage:
                     enc_type = EncProtocolEntity.TYPE_MSG
                 else:
@@ -212,10 +206,10 @@ class AxolotlSendLayer(AxolotlBaseLayer):
                 encEntities.append(EncProtocolEntity(enc_type, 2, ciphertext.serialize(), jid=jid))
 
         if not retryCount:
-            serialized = self.serializeNode(node)
-            messageData = dict_to_protobuf(Message(), serialized).SerializeToString()
+            messageData = self.serializeToProtobuf(node)
             ciphertext = cipher.encrypt(messageData + self.getPadding())
-            encEntities.append(EncProtocolEntity(EncProtocolEntity.TYPE_SKMSG, 2, ciphertext))
+            mediaType = node.getChild("body")["mediatype"] if node.getChild("body") else None
+            encEntities.append(EncProtocolEntity(EncProtocolEntity.TYPE_SKMSG, 2, ciphertext, mediaType))
 
         self.sendEncEntities(node, encEntities)
 
@@ -272,16 +266,35 @@ class AxolotlSendLayer(AxolotlBaseLayer):
             self.groupCiphers[senderKeyName] = groupCipher
         return groupCipher
 
-    @staticmethod
-    def serializeNode(node):
-        params = {}
-        if node.getChild("body"):
-            assert node['type'], "type attribute cannot be empty"
-            params[node['type']] = node.getChild("body").getData()
-        else:
-            raise ValueError("No body or media nodes found")
 
-        return params
+    @staticmethod
+    def serializeToProtobuf(node=None, more=None, toString=True):
+
+        params = more or {}
+        if node:
+            child = node.getChild("body")
+            if child:
+                assert child['type'], "type attribute cannot be empty"
+                data = deep_clean_empty(child.getData())
+                params[child['type']] = data
+            else:
+                raise ValueError("No body or media nodes found")
+        serializedData = dict_to_protobuf(Message(), params)
+
+        if toString:
+            serializedData = serializedData.SerializeToString()
+
+        if "YOWSUP_PROTOBUF_DEBUG" in os.environ:
+            from yowsup.common.protobuf_inspect.types import StandardParser
+            from io import BytesIO
+            parser = StandardParser()
+            parser.types["root"] = {}
+            parser.types["root"]["compact"] = False
+            print(parser.safe_call(parser.match_handler("message"), BytesIO(serializedData), "root"))
+
+        return serializedData
+
+
 
     @staticmethod
     def serializeSKDM(groupId, senderKeyDistributionMessage):
@@ -296,3 +309,11 @@ class AxolotlSendLayer(AxolotlBaseLayer):
     def getPadding():
         num = randint(1, 255)
         return bytearray([num] * num)
+
+
+def deep_clean_empty(d):
+    if not isinstance(d, (dict, list)):
+        return d
+    if isinstance(d, list):
+        return [v for v in (deep_clean_empty(v) for v in d) if v]
+    return {k: v for k, v in ((k, deep_clean_empty(v)) for k, v in d.items()) if v}

@@ -22,8 +22,8 @@ class LiteSenderKeyStore(SenderKeyStore):
         q = "INSERT INTO sender_keys (group_id, sender_id, record) VALUES(?,?, ?)"
         cursor = self.dbConn.cursor()
         serialized = senderKeyRecord.serialize()
-        if sys.version_info < (2,7):
-            serialized = buffer(serialized)
+
+
         try:
             cursor.execute(q, (senderKeyName.getGroupId(), senderKeyName.getSender().getName(), serialized))
             self.dbConn.commit()

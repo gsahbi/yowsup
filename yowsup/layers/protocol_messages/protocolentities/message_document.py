@@ -2,7 +2,6 @@ from urllib.request import urlopen
 
 from yowsup.common.tools import DocumentTools
 from yowsup.layers.protocol_messages.proto.wa_pb2 import DocumentMessage
-from .builder_message_media_downloadable import DownloadableMediaMessageBuilder
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 

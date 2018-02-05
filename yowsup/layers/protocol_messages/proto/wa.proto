@@ -55,6 +55,7 @@ message VideoMessage {
     uint64 file_length    = 4;
     uint64 seconds        = 5;
     bytes media_key       = 6;
+    string caption        = 7;
     uint32 height         = 9;
     uint32 width          = 10;
     bytes file_enc_sha256 = 11;

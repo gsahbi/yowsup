@@ -204,6 +204,8 @@ class MessageProtocolEntity(ProtocolEntity):
         OutgoingMessage = deepcopy(self)
         OutgoingMessage.destination = destination
         OutgoingMessage.sender = None
+        OutgoingMessage.notify = None
+        OutgoingMessage.participant = None #"21626554655@s.whatsapp.net" # self.getLayerInterface(YowAuthenticationProtocolLayer).getUsername(True)
         OutgoingMessage.message_id = message_id
         return OutgoingMessage
 

@@ -154,8 +154,8 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
 
     def handleWhisperMessage(self, node):
         encMessageProtocolEntity = EncryptedMessageProtocolEntity(node)
-
         enc_ = encMessageProtocolEntity.getEnc(EncProtocolEntity.TYPE_MSG)
+
         whisperMessage = WhisperMessage(serialized=enc_.getData())
         sessionCipher = self.getSessionCipher(Jid.denormalize(encMessageProtocolEntity.getAuthor()))
         plaintext = sessionCipher.decryptMsg(whisperMessage)
@@ -176,10 +176,9 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         groupCipher = GroupCipher(self.store, senderKeyName)
         try:
             plaintext = groupCipher.decrypt(enc_.getData())
-            padding = ord(plaintext[-1]) & 0xFF
-            plaintext = plaintext[:-padding]
-            plaintext = plaintext.encode() if sys.version_info >= (3, 0) else plaintext
-            self.parseAndHandleMessageProto(encMessageProtocolEntity, plaintext)
+            paddingByte = plaintext[-1] if type(plaintext[-1]) is int else ord(plaintext[-1])
+            padding = paddingByte & 0xFF
+            self.parseAndHandleMessageProto(encMessageProtocolEntity, plaintext[:-padding])
 
         except NoSessionException:
             logger.warning("No session for %s, going to send a retry",
@@ -188,7 +187,7 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             self.toLower(retry.toProtocolTreeNode())
 
         except Exception as ex:  # (AttributeError, TypeError)
-            logger.error('Exception %s' % ex)
+            logger.error('Exception in handleSenderKeyMessage: %s' % ex)
             raise
 
     def parseAndHandleMessageProto(self, encMessageProtocolEntity, serializedData):
@@ -299,3 +298,15 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         zfiller = len(_id) if len(_id) % 2 == 0 else len(_id) + 1
         _id = _id.zfill(zfiller if zfiller > 6 else 6)
         return binascii.unhexlify(_id)
+
+
+
+    @staticmethod
+    def debugProtobuf(serializedData):
+        if "YOWSUP_PROTOBUF_DEBUG" in os.environ:
+            from yowsup.common.protobuf_inspect.types import StandardParser
+            parser = StandardParser()
+            parser.types["root"] = {}
+            parser.types["root"]["compact"] = False
+            print(parser.safe_call(parser.match_handler("message"), BytesIO(serializedData), "root"))
+

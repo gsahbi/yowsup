@@ -1,45 +1,87 @@
 import binascii
 import mimetypes
-import os
 from urllib.request import urlopen
-
 from Crypto.Cipher import AES
 from axolotl.kdf.hkdfv3 import HKDFv3
 from axolotl.util.byteutil import ByteUtil
-
-from yowsup.common.tools import WATools
+from yowsup.structs import ProtocolTreeNode
 from .message import MessageProtocolEntity
 
 
 class DownloadableMessageProtocolEntity(MessageProtocolEntity):
 
-    def __init__(self, mimeType, fileHash, url, ip, size, fileName, mediaKey,
-                 _id=None, _from=None, to=None, notify=None, timestamp=None,
-                 participant=None, offline=None, retry=None, context=None):
-        super(DownloadableMessageProtocolEntity, self).__init__("media", _id, _from, to, notify, timestamp,
-                                                                participant, offline, retry, context)
-        self.setDownloadableMediaProps(mimeType, fileHash, url, ip, size, fileName, mediaKey)
+    def __init__(self, ptn=None, **kwargs):
+        super().__init__(ptn, **kwargs)
+        if ptn:
+            DownloadableMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
+        else:
+            DownloadableMessageProtocolEntity.load_properties(self, **kwargs)
 
         self.crypt_keys = None
 
-    def setDownloadableMediaProps(self, mime_type, file_sha256, file_enc_sha256,
-                                  url, file_length, media_key, file_name=None):
-        self.mime_type = mime_type
-        self.file_hash = file_sha256
-        self.url = url
-        self.size = int(file_length)
-        self.file_enc_SHA256 = file_enc_sha256
-        self.media_key = media_key
-        self.file_name = file_name
+    @property
+    def media_type(self): return self._media_type
 
+    @media_type.setter
+    def media_type(self, v):
+        assert v == 'video', "How come ?"
+        self._media_type = v
+
+
+
+    @property
+    def url(self): return self._url
+
+    @url.setter
+    def url(self, v):
+        self._url = v
+
+
+    @property
+    def mime_type(self): return self._mime_type
+
+    @mime_type.setter
+    def mime_type(self, v):
+        self._mime_type = v
+
+
+    @property
+    def file_sha256(self): return self._file_sha256
+
+    @file_sha256.setter
+    def file_sha256(self, v):
+        self._file_sha256 = v
+
+
+    @property
+    def file_length(self): return self._file_length
+
+    @file_length.setter
+    def file_length(self, v):
+        self._file_length = int(v) if v else 0
+
+
+    @property
+    def media_key(self): return self._media_key
+
+    @media_key.setter
+    def media_key(self, v):
+        self._media_key = v
+
+
+    @property
+    def file_enc_sha256(self): return self._file_enc_sha256
+
+    @file_enc_sha256.setter
+    def file_enc_sha256(self, v):
+        self._file_enc_sha256 = v
 
     def __str__(self):
         out = super(DownloadableMessageProtocolEntity, self).__str__()
         out += "MimeType: %s\n" % self.mime_type
-        out += "File Hash: %s\n" % self.file_hash
+        out += "File Hash: %s\n" % self.file_sha256
         out += "URL: %s\n" % self.url
-        out += "File Size: %s\n" % self.size
-        out += "File name: %s\n" % self.file_name
+        out += "File Size: %s\n" % self.file_length
         out += "File %s encrypted\n" % ("is" if self.is_encrypted() else "is NOT")
         return out
 
@@ -62,48 +104,33 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
             data = self.decrypt(data, self.media_key)
         return bytearray(data)
 
-    def getMediaSize(self):
-        return self.size
-
-    def getMediaUrl(self):
-        return self.url
-
-    def getMimeType(self):
-        return self.mime_type
-
-    def getExtension(self):
+    def get_extension(self):
         return mimetypes.guess_extension(self.mime_type)
 
     def toProtocolTreeNode(self):
-        node = super(DownloadableMessageProtocolEntity, self).toProtocolTreeNode()
-        mediaNode = node.getChild("enc")
-        mediaNode.setAttribute("mime_type", self.mime_type)
-        mediaNode.setAttribute("file_hash", self.file_hash)
-        mediaNode.setAttribute("url", self.url["url"].encode())
-        mediaNode.setAttribute("size", str(self.size))
-        mediaNode.setAttribute("media_key", self.url["media_key"])
-        mediaNode.setAttribute("file_enc_sha256", self.url["file_enc_sha256"])
+        node = super().toProtocolTreeNode()
+        data = {
+            'media_key': self.media_key,
+            'mime_type': self.mime_type,
+            'url': self.url,
+            'file_sha256': self.file_sha256,
+            'file_length': self.file_length,
+            'file_enc_sha256': self.file_enc_sha256
+        }
 
+        bodyNode = ProtocolTreeNode("body", {}, None, data)
+        node.addChild(bodyNode)
         return node
 
+    def fromProtocolTreeNode(self, node):
+        body = node.getChild("body")
+        enc = node.getChild("enc")
+        data = body.getData()
 
-    @staticmethod
-    def fromBuilder(builder):
-        url = builder.get("url")
-        ip = builder.get("ip")
-        assert url, "Url is required"
-        mimeType = builder.get("mimetype", mimetypes.guess_type(builder.getOriginalFilepath()))
-        filehash = WATools.getFileHashForUpload2(builder.getFilepath())
-        size = os.path.getsize(builder.getFilepath())
-        fileName = os.path.basename(builder.getFilepath())
-        entity = DownloadableMessageProtocolEntity(builder.mediaType, mimeType, filehash, url, ip, size, fileName,
-                                                   to=builder.jid, preview=builder.get("preview"))
-
-    @staticmethod
-    def fromFilePath(fpath, url, mediaType, ip, to, mimeType=None, preview=None, filehash=None, filesize=None):
-        mimeType = mimeType or mimetypes.guess_type(fpath)
-        filehash = filehash or WATools.getFileHashForUpload2(fpath)
-        size = filesize or os.path.getsize(fpath)
-        fileName = os.path.basename(fpath)
-        return DownloadableMessageProtocolEntity(mediaType, mimeType, filehash, url, ip, size, fileName, to=to,
-                                                 preview=preview)
+        self.media_type = enc["mediatype"] if enc else None
+        self.media_key = data["media_key"] if "media_key" in data else None
+        self.mime_type = data["mime_type"] if "mime_type" in data else None
+        self.url = data["url"] if "url" in data else None
+        self.file_sha256 = data["file_sha256"] if "file_sha256" in data else None
+        self.file_length = data["file_length"] if "file_length" in data else None
+        self.file_enc_sha256 = data["file_enc_sha256"] if "file_enc_sha256" in data else None

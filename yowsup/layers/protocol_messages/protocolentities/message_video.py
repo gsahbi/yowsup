@@ -1,127 +1,107 @@
+from yowsup.structs import ProtocolTreeNode
+
 from yowsup.common.tools import VideoTools
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 
 class VideoMessageProtocolEntity(DownloadableMessageProtocolEntity):
-    cryptKeys = ''
 
-    def __init__(self,
-                 mimeType, fileHash, url, ip, size, fileName,
-                 abitrate, acodec, asampfmt, asampfreq, duration, encoding, fps,
-                 width, height, seconds, vbitrate, vcodec, caption=None, mediaKey=None,
-                 _id=None, _from=None, to=None, notify=None, timestamp=None,
-                 participant=None, preview=None, offline=None, retry=None):
+    def __init__(self, ptn=None, **kwargs):
+        super().__init__(ptn, **kwargs)
+        if ptn:
+            VideoMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
+        else:
+            VideoMessageProtocolEntity.load_properties(self, **kwargs)
 
-        super(VideoMessageProtocolEntity, self).__init__("video",
-                                                         mimeType, fileHash, url, ip, size, fileName, mediaKey,
-                                                         None, _id, _from, to, notify, timestamp,
-                                                         participant, preview, offline, retry)
-        self.setVideoProps(encoding, width, height, vbitrate, abitrate, acodec, asampfmt, asampfreq, duration, fps,
-                           seconds, vcodec, caption)
-        self.cryptKeys = '576861747341707020566964656f204b657973'
+        self.crypt_keys = '576861747341707020566964656f204b657973'
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, v):
+        self._height = int(v)
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, v):
+        self._width = int(v)
+
+    @property
+    def caption(self):
+        return self._caption
+
+    @caption.setter
+    def caption(self, v):
+        self._caption = v
+
+    @property
+    def duration(self):
+        return self._duration
+
+    @duration.setter
+    def duration(self, v):
+        self._duration = int(v)
+
+    @property
+    def jpeg_thumbnail(self):
+        return self._jpeg_thumbnail
+
+    @jpeg_thumbnail.setter
+    def jpeg_thumbnail(self, v):
+        self._jpeg_thumbnail = v
 
     def __str__(self):
         out = super(VideoMessageProtocolEntity, self).__str__()
-        out += "Audio bitrate: %s\n" % self.abitrate
-        out += "Audio codec: %s\n" % self.acodec
-        out += "Audio sampling fmt.: %s\n" % self.asampfmt
-        out += "Audio sampling freq.: %s\n" % self.asampfreq
         out += "Duration: %s\n" % self.duration
-        out += "Encoding: %s\n" % self.encoding
-        out += "Fps: %s\n" % self.fps
         out += "Width: %s\n" % self.width
         out += "Height: %s\n" % self.height
-        out += "Video bitrate: %s\n" % self.vbitrate
-        out += "Video codec: %s\n" % self.vcodec
         if self.caption is not None:
             out += "Caption: %s\n" % self.caption
         return out
 
-    def setVideoProps(self, encoding, width, height, vbitrate=None, abitrate=None, acodec=None, asampfmt=None,
-                      asampfreq=None, duration=None, fps=None, seconds=None, vcodec=None, caption=None, ):
-        self.abitrate = abitrate
-        self.acodec = acodec
-        self.asampfmt = asampfmt
-        self.asampfreq = asampfreq
-        self.duration = duration
-        self.encoding = encoding
-        self.fps = fps
-        self.height = height
-        self.seconds = seconds
-        self.vbitrate = vbitrate
-        self.vcodec = vcodec
-        self.width = width
-        self.caption = caption
-        self.cryptKeys = '576861747341707020566964656f204b657973'
+    def fromProtocolTreeNode(self, node):
+        body = node.getChild("body")
+        assert body is not None and body["type"] == "video", "Called with wrong body payload"
+        data = body.getData()
 
-    def getCaption(self):
-        return self.caption
+        self.duration = data["seconds"] if "seconds" in data else None
+        self.width = data["width"] if "width" in data else None
+        self.height = data["height"] if "height" in data else None
+        self.caption = data["caption"] if "caption" in data else None
+        self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 
     def toProtocolTreeNode(self):
-        node = super(VideoMessageProtocolEntity, self).toProtocolTreeNode()
-        mediaNode = node.getChild("enc")
-        if self.abitrate is not None:
-            mediaNode.setAttribute("abitrate", self.abitrate)
-        if self.acodec is not None:
-            mediaNode.setAttribute("acodec", self.acodec)
-        if self.asampfmt is not None:
-            mediaNode.setAttribute("asampfmt", self.asampfmt)
-        if self.asampfreq is not None:
-            mediaNode.setAttribute("asampfreq", self.asampfreq)
+
+        node = super().toProtocolTreeNode()
+        bodyNode = node.getChild("body") or ProtocolTreeNode("body", {}, None, None)
+
+        bodyNode["type"] = "video"
+        bodyNode["mediatype"] = "video"
+
+        data = {
+            "height": self.height,
+            "width": self.width,
+            "jpeg_thumbnail": self.jpeg_thumbnail
+        }
+
         if self.duration is not None:
-            mediaNode.setAttribute("duration", self.duration)
-        if self.encoding is not None:
-            mediaNode.setAttribute("encoding", self.encoding)
-        mediaNode.setAttribute("height", str(self.height))
-        mediaNode.setAttribute("width", str(self.width))
-        if self.abitrate is not None:
-            mediaNode.setAttribute("abitrate", str(self.abitrate))
-        if self.acodec is not None:
-            mediaNode.setAttribute("acodec", self.acodec)
-        if self.asampfmt is not None:
-            mediaNode.setAttribute("asampfmt", self.asampfmt)
-        if self.asampfreq is not None:
-            mediaNode.setAttribute("asampfreq", str(self.asampfreq))
-        if self.duration is not None:
-            mediaNode.setAttribute("duration", str(self.duration))
-        if self.fps is not None:
-            mediaNode.setAttribute("fps", str(self.fps))
-        if self.seconds is not None:
-            mediaNode.setAttribute("seconds", str(self.seconds))
-        if self.vbitrate is not None:
-            mediaNode.setAttribute("vbitrate", str(self.vbitrate))
-        if self.vcodec is not None:
-            mediaNode.setAttribute("vcodec", self.vcodec)
+            data["seconds"] = self.duration
+
         if self.caption is not None:
-            mediaNode.setAttribute("caption", self.caption)
+            data["caption"] = self.caption
+
+        data = {**bodyNode.getData(), **data}
+        bodyNode.setData(data)
 
         return node
 
     @staticmethod
-    def fromProtocolTreeNode(node):
-        entity = DownloadableMessageProtocolEntity.fromProtocolTreeNode(node)
-        entity.__class__ = VideoMessageProtocolEntity
-        mediaNode = node.getChild("media")
-        entity.setMimeType(mediaNode.getAttributeValue("mimetype"))
-        entity.setVideoProps(
-            mediaNode.getAttributeValue("encoding"),
-            mediaNode.getAttributeValue("width"),
-            mediaNode.getAttributeValue("height"),
-            mediaNode.getAttributeValue("vbitrate"),
-            mediaNode.getAttributeValue("abitrate"),
-            mediaNode.getAttributeValue("acodec"),
-            mediaNode.getAttributeValue("asampfmt"),
-            mediaNode.getAttributeValue("asampfreq"),
-            mediaNode.getAttributeValue("duration"),
-            mediaNode.getAttributeValue("fps"),
-            mediaNode.getAttributeValue("seconds"),
-            mediaNode.getAttributeValue("vcodec"),
-            mediaNode.getAttributeValue("caption")
-        )
-        return entity
-
-    @staticmethod
-    def fromFilePath(path, url, ip, to, mimeType=None, caption=None):
+    def fromFilePath(path, caption=None):
         preview = VideoTools.generatePreviewFromVideo(path)
         entity = DownloadableMessageProtocolEntity.fromFilePath(path, url,
                                                                 DownloadableMessageProtocolEntity.MEDIA_TYPE_VIDEO,
