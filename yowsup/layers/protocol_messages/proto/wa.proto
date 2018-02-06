@@ -74,7 +74,7 @@ message LocationMessage {
 }
 message DocumentMessage {
     string url            = 1;
-    string mimeType       = 2;
+    string mime_type       = 2;
     string title          = 3;
     bytes file_sha256     = 4;
     uint64 file_length    = 5;

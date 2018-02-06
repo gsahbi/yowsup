@@ -284,14 +284,6 @@ class AxolotlSendLayer(AxolotlBaseLayer):
         if toString:
             serializedData = serializedData.SerializeToString()
 
-        if "YOWSUP_PROTOBUF_DEBUG" in os.environ:
-            from yowsup.common.protobuf_inspect.types import StandardParser
-            from io import BytesIO
-            parser = StandardParser()
-            parser.types["root"] = {}
-            parser.types["root"]["compact"] = False
-            print(parser.safe_call(parser.match_handler("message"), BytesIO(serializedData), "root"))
-
         return serializedData
 
 
@@ -307,7 +299,7 @@ class AxolotlSendLayer(AxolotlBaseLayer):
 
     @staticmethod
     def getPadding():
-        num = randint(1, 255)
+        num = randint(1, 15)
         return bytearray([num] * num)
 
 

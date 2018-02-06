@@ -37,7 +37,7 @@ class AudioMessageProtocolEntity(DownloadableMessageProtocolEntity):
         body = node.getChild("body")
         assert body is not None and body["type"] == "audio", "Called with wrong body payload"
         data = body.getData()
-        self.duration = data["seconds"] if "seconds" in data else None
+        self.duration = data["seconds"] if "seconds" in data else 0
 
     def toProtocolTreeNode(self):
 

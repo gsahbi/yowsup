@@ -69,9 +69,9 @@ class VideoMessageProtocolEntity(DownloadableMessageProtocolEntity):
         assert body is not None and body["type"] == "video", "Called with wrong body payload"
         data = body.getData()
 
-        self.duration = data["seconds"] if "seconds" in data else None
-        self.width = data["width"] if "width" in data else None
-        self.height = data["height"] if "height" in data else None
+        self.duration = data["seconds"] if "seconds" in data else 0
+        self.width = data["width"] if "width" in data else 0
+        self.height = data["height"] if "height" in data else 0
         self.caption = data["caption"] if "caption" in data else None
         self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 

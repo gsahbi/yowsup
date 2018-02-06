@@ -13,27 +13,43 @@ class MessageContext(object):
     def load_properties(self, **kwargs):
         props = [name for name, value in vars(MessageContext).items() if isinstance(value, property)]
         for p in props:
-            self.p = kwargs[p] if p in kwargs else None
+            setattr(self, p, kwargs[p] if p in kwargs else None)
 
     @property
-    def stanza_id(self):
-        return self._stanza_id
+    def stanza_id(self): return self._stanza_id
+
+    @stanza_id.setter
+    def stanza_id(self, v):
+        self._stanza_id = v
 
     @property
-    def participant(self):
-        return self._participant
+    def participant(self): return self._participant
+
+    @participant.setter
+    def participant(self, v):
+        self._participant = v
 
     @property
-    def quoted_message(self):
-        return self._quoted_message
+    def quoted_message(self): return self._quoted_message
+
+    @quoted_message.setter
+    def quoted_message(self, v):
+        self._quoted_message = v
 
     @property
-    def remote_jid(self):
-        return self._remote_jid
+    def remote_jid(self): return self._remote_jid
+
+    @remote_jid.setter
+    def remote_jid(self, v):
+        self._remote_jid = v
 
     @property
-    def mentioned_jid(self):
-        return self._mentioned_jid
+    def mentioned_jids(self): return self._mentioned_jids
+
+
+    @mentioned_jids.setter
+    def mentioned_jids(self, v):
+        self._mentioned_jids = v
 
     def __str__(self):
 
@@ -48,7 +64,7 @@ class MessageContext(object):
 
         if self.is_mention():
             out += "Mention context:\n"
-            out += "\tMentioned JIDs: %s\n" % ", ".join(self.mentioned_jid)
+            out += "\tMentioned JIDs: %s\n" % ", ".join(self.mentioned_jids)
             if self.remote_jid is not None:
                 out += "\tRemote JID: %s\n" % self.remote_jid
 
@@ -58,7 +74,7 @@ class MessageContext(object):
         return self.stanza_id is not None
 
     def is_mention(self):
-        return self.mentioned_jid is not None
+        return self.mentioned_jids is not None
 
     def get_quoted_message_type(self):
         if self.quoted_message:
@@ -67,8 +83,8 @@ class MessageContext(object):
             return None
 
     def get_mentioned_jids(self):
-        if self.mentioned_jid:
-            return self.mentioned_jid
+        if self.mentioned_jids:
+            return self.mentioned_jids
         else:
             return None
 

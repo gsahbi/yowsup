@@ -1,90 +1,87 @@
-from urllib.request import urlopen
-
-from yowsup.common.tools import DocumentTools
-from yowsup.layers.protocol_messages.proto.wa_pb2 import DocumentMessage
+from yowsup.structs import ProtocolTreeNode
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 
 class DocumentMessageProtocolEntity(DownloadableMessageProtocolEntity):
 
+    def __init__(self, ptn=None, **kwargs):
+        super().__init__(ptn, **kwargs)
+        if ptn:
+            DocumentMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
+        else:
+            DocumentMessageProtocolEntity.load_properties(self, **kwargs)
 
-    def __init__(self,
-                 mimeType, fileHash, url, ip, size, fileName, pageCount,
-                 encoding=None, width=None, height=None, caption=None, mediaKey=None,
-                 _id=None, _from=None, to=None, notify=None, timestamp=None,
-                 participant=None, preview=None, offline=None, retry=None):
+        self.crypt_keys = '576861747341707020446f63756d656e74204b657973'
 
-        super(DocumentMessageProtocolEntity, self).__init__("document",
-                                                            mimeType, fileHash, url, ip, size, fileName, pageCount,
-                                                            mediaKey,
-                                                            _id, _from, to, notify, timestamp, participant, preview,
-                                                            offline, retry)
-        self.setDocumentProps(pageCount)
+
+    @property
+    def title(self): return self._title
+
+    @title.setter
+    def title(self, v):
+        self._title = v
+
+
+    @property
+    def page_count(self): return self._page_count
+
+    @page_count.setter
+    def page_count(self, v):
+        self._page_count = int(v)
+
+
+    @property
+    def file_name(self): return self._file_name
+
+    @file_name.setter
+    def file_name(self, v):
+        self._file_name = v
+
+
+    @property
+    def jpeg_thumbnail(self): return self._jpeg_thumbnail
+
+    @jpeg_thumbnail.setter
+    def jpeg_thumbnail(self, v):
+        self._jpeg_thumbnail = v
+
 
     def __str__(self):
-        out = super(DocumentMessageProtocolEntity, self).__str__()
-        out += "Encoding: %s\n" % self.encoding
-        # out += "Width: %s\n" % self.width
-        # out += "Height: %s\n" % self.height
-        if self.caption:
-            out += "Caption: %s\n" % self.caption
+        out = super().__str__()
+
+        if self.title:
+            out += "Title: %s\n" % self.title
+        if self.page_count:
+            out += "Page Count: %s\n" % self.page_count
+        if self.file_name:
+            out += "File Name: %s\n" % self.file_name
         return out
 
-    def setDocumentProps(self, pageCount):
-        self.pageCount = str(pageCount)
-        self.cryptKeys = '576861747341707020446f63756d656e74204b657973'
 
-    def setFileName(self, fileName):
-        self.fileName = fileName
-
-    def getFileName(self):
-        return self.fileName
-
-    def getCaption(self):
-        return self.caption
 
     def toProtocolTreeNode(self):
-        node = super(DocumentMessageProtocolEntity, self).toProtocolTreeNode()
-        mediaNode = node.getChild("enc")
-        mediaNode.setAttribute("pageCount", str(self.pageCount))
+        node = super().toProtocolTreeNode()
+        bodyNode = node.getChild("body") or ProtocolTreeNode("body", {}, None, None)
+        bodyNode["type"] = "document"
+
+        data = {
+            'title': self.title,
+            'page_count': self.page_count,
+            'file_name': self.file_name,
+            'jpeg_thumbnail': self.jpeg_thumbnail
+        }
+
+        data = {**bodyNode.getData(), **data}
+        bodyNode.setData(data)
         return node
 
-    def toProtobufMessage(self):
-        document_message = DocumentMessage()
-        document_message.url = self.url
-        document_message.mime_type = self.mimeType  # "application/pdf"
-        document_message.title = self.fileName
-        document_message.file_sha256 = self.fileHash
-        document_message.file_length = self.size
-        document_message.page_count = self.pageCount;
-        document_message.media_key = self.mediaKey
-        document_message.jpeg_thumbnail = self.preview
-
-        return document_message
-
-    @staticmethod
-    def fromProtocolTreeNode(node):
-        entity = DownloadableMessageProtocolEntity.fromProtocolTreeNode(node)
-        entity.__class__ = DocumentMessageProtocolEntity
-        mediaNode = node.getChild("media")
-        entity.setFileName(mediaNode.getAttributeValue("title"))
-        entity.setDocumentProps(
-            mediaNode.getAttributeValue("encoding")
-        )
-        return entity
-
-    @staticmethod
-    def getBuilder(jid, filepath):
-        return DownloadableMediaMessageBuilder(DocumentMessageProtocolEntity, jid, filepath)
-
-    @staticmethod
-    def fromBuilder(builder):
-        builder.getOrSet("preview", lambda: DocumentTools.generatePreviewFromDocument(builder.getOriginalFilepath()))
-        pageCount = DocumentTools.getDocumentProperties(builder.getOriginalFilepath())
-        entity = DownloadableMessageProtocolEntity.fromBuilder(builder)
-        entity.__class__ = builder.cls
-        entity.setDocumentProps(pageCount)
-        return entity
+    def fromProtocolTreeNode(self, node):
+        body = node.getChild("body")
+        data = body.getData()
+        self.title = data["title"] if "title" in data else None
+        self.page_count = data["page_count"] if "page_count" in data else 0
+        self.file_name = data["file_name"] if "file_name" in data else None
+        self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 
     @staticmethod
     def fromFilePath(path, url, ip, to, mimeType=None):
@@ -93,16 +90,3 @@ class DocumentMessageProtocolEntity(DownloadableMessageProtocolEntity):
         builder.set("ip", ip)
         builder.set("mimetype", mimeType)
         return DocumentMessageProtocolEntity.fromBuilder(builder)
-
-    def unpad(self, s):
-        return s[:-ord(s[len(s) - 1:])]
-
-
-    def is_encrypted(self):
-        return self.cryptKeys and self.mediaKey
-
-    def getMediaContent(self):
-        data = urlopen(self.url.decode('ASCII')).read()
-        if self.is_encrypted():
-            data = self.decrypt(data, self.mediaKey)
-        return data

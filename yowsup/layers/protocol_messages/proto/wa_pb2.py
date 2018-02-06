@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='wa.proto',
   package='com.whatsapp.proto',
   syntax='proto3',
-  serialized_pb=_b('\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\xb1\x04\n\x07Message\x12G\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x1e.com.whatsapp.proto.SKDMessage\x12\x0e\n\x04text\x18\x01 \x01(\tH\x00\x12\x31\n\x05image\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12\x35\n\x07\x63ontact\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12\x37\n\x08location\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12@\n\rextended_text\x18\x06 \x01(\x0b\x32\'.com.whatsapp.proto.ExtendedTextMessageH\x00\x12\x37\n\x08\x64ocument\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x31\n\x05\x61udio\x18\x08 \x01(\x0b\x32 .com.whatsapp.proto.AudioMessageH\x00\x12\x31\n\x05video\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x12\x41\n\rcontact_array\x18\r \x01(\x0b\x32(.com.whatsapp.proto.ContactsArrayMessageH\x00\x42\x06\n\x04\x62ody\"N\n\nSKDMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\x83\x02\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xd9\x01\n\x0c\x41udioMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x0b\n\x03ptt\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x83\x02\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0e\n\x06height\x18\t \x01(\r\x12\r\n\x05width\x18\n \x01(\r\x12\x17\n\x0f\x66ile_enc_sha256\x18\x0b \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc1\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x8b\x02\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x10\n\x08mimeType\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x11\n\tfile_name\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc3\x01\n\x13\x45xtendedTextMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x95\x01\n\x0b\x43ontextInfo\x12\x11\n\tstanza_id\x18\x01 \x01(\t\x12\x13\n\x0bparticipant\x18\x02 \x01(\t\x12\x33\n\x0equoted_message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\x12\x12\n\nremote_jid\x18\x04 \x01(\t\x12\x15\n\rmentioned_jid\x18\x0f \x03(\t\"l\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\t\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x98\x01\n\x14\x43ontactsArrayMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x33\n\x07\x63ontact\x18\x02 \x03(\x0b\x32\".com.whatsapp.proto.ContactMessage\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfob\x06proto3')
+  serialized_pb=_b('\n\x08wa.proto\x12\x12\x63om.whatsapp.proto\"\xb1\x04\n\x07Message\x12G\n\x1fsender_key_distribution_message\x18\x02 \x01(\x0b\x32\x1e.com.whatsapp.proto.SKDMessage\x12\x0e\n\x04text\x18\x01 \x01(\tH\x00\x12\x31\n\x05image\x18\x03 \x01(\x0b\x32 .com.whatsapp.proto.ImageMessageH\x00\x12\x35\n\x07\x63ontact\x18\x04 \x01(\x0b\x32\".com.whatsapp.proto.ContactMessageH\x00\x12\x37\n\x08location\x18\x05 \x01(\x0b\x32#.com.whatsapp.proto.LocationMessageH\x00\x12@\n\rextended_text\x18\x06 \x01(\x0b\x32\'.com.whatsapp.proto.ExtendedTextMessageH\x00\x12\x37\n\x08\x64ocument\x18\x07 \x01(\x0b\x32#.com.whatsapp.proto.DocumentMessageH\x00\x12\x31\n\x05\x61udio\x18\x08 \x01(\x0b\x32 .com.whatsapp.proto.AudioMessageH\x00\x12\x31\n\x05video\x18\t \x01(\x0b\x32 .com.whatsapp.proto.VideoMessageH\x00\x12\x41\n\rcontact_array\x18\r \x01(\x0b\x32(.com.whatsapp.proto.ContactsArrayMessageH\x00\x42\x06\n\x04\x62ody\"N\n\nSKDMessage\x12\x0f\n\x07groupId\x18\x01 \x01(\t\x12/\n\'axolotl_sender_key_distribution_message\x18\x02 \x01(\x0c\"\x83\x02\n\x0cImageMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x0f\n\x07\x63\x61ption\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x0e\n\x06height\x18\x06 \x01(\r\x12\r\n\x05width\x18\x07 \x01(\r\x12\x11\n\tmedia_key\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xd9\x01\n\x0c\x41udioMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x0b\n\x03ptt\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\x08 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x94\x02\n\x0cVideoMessage\x12\x0b\n\x03url\x18\x01 \x01(\x0c\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x03 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x04 \x01(\x04\x12\x0f\n\x07seconds\x18\x05 \x01(\x04\x12\x11\n\tmedia_key\x18\x06 \x01(\x0c\x12\x0f\n\x07\x63\x61ption\x18\x07 \x01(\t\x12\x0e\n\x06height\x18\t \x01(\r\x12\r\n\x05width\x18\n \x01(\r\x12\x17\n\x0f\x66ile_enc_sha256\x18\x0b \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc1\x01\n\x0fLocationMessage\x12\x18\n\x10\x64\x65grees_latitude\x18\x01 \x01(\x01\x12\x19\n\x11\x64\x65grees_longitude\x18\x02 \x01(\x01\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0b\n\x03url\x18\x05 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x8c\x02\n\x0f\x44ocumentMessage\x12\x0b\n\x03url\x18\x01 \x01(\t\x12\x11\n\tmime_type\x18\x02 \x01(\t\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x66ile_sha256\x18\x04 \x01(\x0c\x12\x13\n\x0b\x66ile_length\x18\x05 \x01(\x04\x12\x12\n\npage_count\x18\x06 \x01(\r\x12\x11\n\tmedia_key\x18\x07 \x01(\x0c\x12\x11\n\tfile_name\x18\x08 \x01(\x0c\x12\x17\n\x0f\x66ile_enc_sha256\x18\t \x01(\x0c\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\xc3\x01\n\x13\x45xtendedTextMessage\x12\x0c\n\x04text\x18\x01 \x01(\t\x12\x14\n\x0cmatched_text\x18\x02 \x01(\t\x12\x15\n\rcanonical_url\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\r\n\x05title\x18\x06 \x01(\t\x12\x16\n\x0ejpeg_thumbnail\x18\x10 \x01(\x0c\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x95\x01\n\x0b\x43ontextInfo\x12\x11\n\tstanza_id\x18\x01 \x01(\t\x12\x13\n\x0bparticipant\x18\x02 \x01(\t\x12\x33\n\x0equoted_message\x18\x03 \x01(\x0b\x32\x1b.com.whatsapp.proto.Message\x12\x12\n\nremote_jid\x18\x04 \x01(\t\x12\x15\n\rmentioned_jid\x18\x0f \x03(\t\"l\n\x0e\x43ontactMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\r\n\x05vcard\x18\x10 \x01(\t\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfo\"\x98\x01\n\x14\x43ontactsArrayMessage\x12\x14\n\x0c\x64isplay_name\x18\x01 \x01(\t\x12\x33\n\x07\x63ontact\x18\x02 \x03(\x0b\x32\".com.whatsapp.proto.ContactMessage\x12\x35\n\x0c\x63ontext_info\x18\x11 \x01(\x0b\x32\x1f.com.whatsapp.proto.ContextInfob\x06proto3')
 )
 
 
@@ -398,35 +398,42 @@ _VIDEOMESSAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='height', full_name='com.whatsapp.proto.VideoMessage.height', index=6,
+      name='caption', full_name='com.whatsapp.proto.VideoMessage.caption', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='height', full_name='com.whatsapp.proto.VideoMessage.height', index=7,
       number=9, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='width', full_name='com.whatsapp.proto.VideoMessage.width', index=7,
+      name='width', full_name='com.whatsapp.proto.VideoMessage.width', index=8,
       number=10, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='file_enc_sha256', full_name='com.whatsapp.proto.VideoMessage.file_enc_sha256', index=8,
+      name='file_enc_sha256', full_name='com.whatsapp.proto.VideoMessage.file_enc_sha256', index=9,
       number=11, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='jpeg_thumbnail', full_name='com.whatsapp.proto.VideoMessage.jpeg_thumbnail', index=9,
+      name='jpeg_thumbnail', full_name='com.whatsapp.proto.VideoMessage.jpeg_thumbnail', index=10,
       number=16, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='context_info', full_name='com.whatsapp.proto.VideoMessage.context_info', index=10,
+      name='context_info', full_name='com.whatsapp.proto.VideoMessage.context_info', index=11,
       number=17, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -445,7 +452,7 @@ _VIDEOMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=1159,
-  serialized_end=1418,
+  serialized_end=1435,
 )
 
 
@@ -517,8 +524,8 @@ _LOCATIONMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1421,
-  serialized_end=1614,
+  serialized_start=1438,
+  serialized_end=1631,
 )
 
 
@@ -537,7 +544,7 @@ _DOCUMENTMESSAGE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='mimeType', full_name='com.whatsapp.proto.DocumentMessage.mimeType', index=1,
+      name='mime_type', full_name='com.whatsapp.proto.DocumentMessage.mime_type', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -618,8 +625,8 @@ _DOCUMENTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1617,
-  serialized_end=1884,
+  serialized_start=1634,
+  serialized_end=1902,
 )
 
 
@@ -691,8 +698,8 @@ _EXTENDEDTEXTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1887,
-  serialized_end=2082,
+  serialized_start=1905,
+  serialized_end=2100,
 )
 
 
@@ -750,8 +757,8 @@ _CONTEXTINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2085,
-  serialized_end=2234,
+  serialized_start=2103,
+  serialized_end=2252,
 )
 
 
@@ -795,8 +802,8 @@ _CONTACTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2236,
-  serialized_end=2344,
+  serialized_start=2254,
+  serialized_end=2362,
 )
 
 
@@ -840,8 +847,8 @@ _CONTACTSARRAYMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2347,
-  serialized_end=2499,
+  serialized_start=2365,
+  serialized_end=2517,
 )
 
 _MESSAGE.fields_by_name['sender_key_distribution_message'].message_type = _SKDMESSAGE

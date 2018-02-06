@@ -59,8 +59,8 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
         assert body is not None and body["type"] == "image", "Called with wrong body payload"
         data = body.getData()
 
-        self.width = data["width"] if "width" in data else None
-        self.height = data["height"] if "height" in data else None
+        self.width = data["width"] if "width" in data else 0
+        self.height = data["height"] if "height" in data else 0
         self.caption = data["caption"] if "caption" in data else None
         self.jpeg_thumbnail = data["jpeg_thumbnail"] if "jpeg_thumbnail" in data else None
 
@@ -70,10 +70,9 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
         bodyNode = node.getChild("body") or ProtocolTreeNode("body", {}, None, None)
 
         bodyNode["type"] = "image"
-        bodyNode["mediatype"] = "image"
 
         data = {
-            "heigh": self.height,
+            "height": self.height,
             "width": self.width,
             "jpeg_thumbnail": self.jpeg_thumbnail
         }

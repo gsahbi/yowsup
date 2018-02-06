@@ -2,9 +2,11 @@ from yowsup.structs import ProtocolTreeNode
 import math
 import binascii
 import sys
+
+
 class ReadDecoder:
     def __init__(self, tokenDictionary):
-        self.streamStarted = False;
+        self.streamStarted = False
         self.tokenDictionary = tokenDictionary
 
     def reset(self):
@@ -42,7 +44,7 @@ class ReadDecoder:
         if tag != 1:
             if tag == 236:
                 tag = data.pop(0) + 237
-            token = self.getToken(tag, data)#self.tokenDictionary.getToken(tag)
+            token = self.getToken(tag, data)
             raise Exception("expecting STREAM_START in streamStart, instead got token: %s" % token)
         attribCount = (size - 2 + size % 2) / 2
         self.readAttributes(attribCount, data)
@@ -55,11 +57,11 @@ class ReadDecoder:
         dataArr = self.readArray(size, data)
         string = ''
         for i in range(0, nrOfNibbles):
-            _byte = dataArr[int(math.floor(i/2))]
+            _byte = dataArr[int(math.floor(i / 2))]
             _shift = 4 * (1 - i % 2)
             dec = (_byte & (15 << _shift)) >> _shift
 
-            if dec in (0,1,2,3,4,5,6,7,8,9):
+            if dec in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9):
                 string += str(dec)
             elif dec in (10, 11):
                 string += chr(dec - 10 + 45)
@@ -74,17 +76,18 @@ class ReadDecoder:
             remove = 1
         size = size & 0x7F
         text = bytearray(self.readArray(size, data))
-        hexData = binascii.hexlify(str(text) if sys.version_info < (2,7) else text).upper()
+        hexData = binascii.hexlify(str(text) if sys.version_info < (2, 7) else text).upper()
         dataSize = len(hexData)
         out = []
         if remove == 0:
             for i in range(0, dataSize):
-                char = chr(hexData[i]) if type(hexData[i]) is int else hexData[i] #python2/3 compat
+                char = chr(hexData[i]) if type(hexData[i]) is int else hexData[i]  # python2/3 compat
                 val = ord(binascii.unhexlify("0%s" % char))
-                if i == (dataSize - 1) and val > 11 and n != 251: continue
+                if i == (dataSize - 1) and val > 11 and n != 251:
+                    continue
                 out.append(self.unpackByte(n, val))
         else:
-            out =  map(ord, list(hexData[0: -remove])) if sys.version_info < (3,0) else list(hexData[0: -remove])
+            out = map(ord, list(hexData[0: -remove])) if sys.version_info < (3, 0) else list(hexData[0: -remove])
 
         return out
 
@@ -95,7 +98,8 @@ class ReadDecoder:
             return self.unpackNibble(n2)
         raise ValueError("bad packed type %s" % n)
 
-    def unpackHex(self, n):
+    @staticmethod
+    def unpackHex(n):
         if n in range(0, 10):
             return n + 48
         if n in range(10, 16):
@@ -103,15 +107,16 @@ class ReadDecoder:
 
         raise ValueError("bad hex %s" % n)
 
-    def unpackNibble(self, n):
+    @staticmethod
+    def unpackNibble(n):
         if n in range(0, 10):
             return n + 48
         if n in (10, 11):
             return 45 + (n - 10)
         raise ValueError("bad nibble %s" % n)
 
-
-    def readHeader(self, data, offset = 0):
+    @staticmethod
+    def readHeader(data, offset=0):
         ret = 0
         if len(data) >= (3 + offset):
             b0 = data[offset]
@@ -121,10 +126,12 @@ class ReadDecoder:
 
         return ret
 
-    def readInt8(self, data):
-        return data.pop(0);
+    @staticmethod
+    def readInt8(data):
+        return data.pop(0)
 
-    def readInt16(self, data):
+    @staticmethod
+    def readInt16(data):
         intTop = data.pop(0)
         intBot = data.pop(0)
         value = (intTop << 8) + intBot
@@ -133,28 +140,30 @@ class ReadDecoder:
         else:
             return ""
 
-    def readInt20(self, data):
-         int1 = data.pop(0)
-         int2 = data.pop(0)
-         int3 = data.pop(0)
-         return ((int1 & 0xF) << 16) | (int2 << 8) | int3
+    @staticmethod
+    def readInt20(data):
+        int1 = data.pop(0)
+        int2 = data.pop(0)
+        int3 = data.pop(0)
+        return ((int1 & 0xF) << 16) | (int2 << 8) | int3
 
-    def readInt24(self, data):
+    @staticmethod
+    def readInt24(data):
         int1 = data.pop(0)
         int2 = data.pop(0)
         int3 = data.pop(0)
         value = (int1 << 16) + (int2 << 8) + (int3 << 0)
         return value
 
-    def readInt31(self, data):
+    @staticmethod
+    def readInt31(data):
         data.pop(0)
         int1 = data.pop(0)
         int2 = data.pop(0)
         int3 = data.pop(0)
         return (int1 << 24) | (int1 << 16) | int2 << 8 | int3
 
-    def readListSize(self,token, data):
-        size = 0
+    def readListSize(self, token, data):
         if token == 0:
             size = 0
         else:
@@ -172,10 +181,10 @@ class ReadDecoder:
         for i in range(0, int(attribCount)):
             key = self.readString(self.readInt8(data), data)
             value = self.readString(self.readInt8(data), data)
-            attribs[key]=value
+            attribs[key] = value
         return attribs
 
-    def readString(self,token, data):
+    def readString(self, token, data):
         if token == -1:
             raise Exception("-1 token in readString")
 
@@ -211,14 +220,14 @@ class ReadDecoder:
             return "".join(map(chr, buf20))
 
         if token == 254:
-            size31 = self.readInt31()
+            size31 = self.readInt31(data)
             buf31 = self.readArray(size31, data)
             return "".join(map(chr, buf31))
 
+        raise Exception("readString couldn't match token " + str(token))
 
-        raise Exception("readString couldn't match token "+str(token))
-
-    def readArray(self, length, data):
+    @staticmethod
+    def readArray(length, data):
         out = []
         for i in range(0, length):
             out.append(data.pop(0))
@@ -239,9 +248,9 @@ class ReadDecoder:
         if size == 0 or tag is None:
             raise ValueError("nextTree sees 0 list or null tag")
 
-        attribCount = (size - 2 + size % 2)/2
+        attribCount = (size - 2 + size % 2) / 2
         attribs = self.readAttributes(attribCount, data)
-        if size % 2 ==1:
+        if size % 2 == 1:
             return ProtocolTreeNode(tag, attribs)
 
         read2 = self.readInt8(data)
@@ -269,13 +278,14 @@ class ReadDecoder:
 
         return ProtocolTreeNode(tag, attribs, nodeChildren, nodeData)
 
-    def readList(self,token, data):
+    def readList(self, token, data):
         size = self.readListSize(token, data)
         listx = []
-        for i in range(0,size):
+        for i in range(0, size):
             listx.append(self.nextTreeInternal(data))
 
-        return listx;
+        return listx
 
-    def isListTag(self, b):
+    @staticmethod
+    def isListTag(b):
         return b in (248, 0, 249)

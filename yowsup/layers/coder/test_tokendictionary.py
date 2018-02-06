@@ -1,5 +1,7 @@
 from yowsup.layers.coder.tokendictionary import TokenDictionary
 import unittest
+
+
 class TokenDictionaryTest(unittest.TestCase):
     def setUp(self):
         self.tokenDictionary = TokenDictionary()
