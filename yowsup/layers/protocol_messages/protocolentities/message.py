@@ -7,13 +7,13 @@ from yowsup.structs import ProtocolEntity
 
 class MessageContext(object):
 
-    def __init__(self, **kwargs):
-        self.load_properties(**kwargs)
+    def __init__(self, stanza_id=None, participant=None, quoted_message=None, remote_jid=None, mentioned_jid=None):
+        self.stanza_id = stanza_id
+        self.participant = participant
+        self.quoted_message = quoted_message
+        self.remote_jid = remote_jid
+        self.mentioned_jid = list(mentioned_jid) if mentioned_jid is not None else None
 
-    def load_properties(self, **kwargs):
-        props = [name for name, value in vars(MessageContext).items() if isinstance(value, property)]
-        for p in props:
-            setattr(self, p, kwargs[p] if p in kwargs else None)
 
     @property
     def stanza_id(self): return self._stanza_id
@@ -44,11 +44,11 @@ class MessageContext(object):
         self._remote_jid = v
 
     @property
-    def mentioned_jids(self): return self._mentioned_jids
+    def mentioned_jid(self): return self._mentioned_jids
 
 
-    @mentioned_jids.setter
-    def mentioned_jids(self, v):
+    @mentioned_jid.setter
+    def mentioned_jid(self, v):
         self._mentioned_jids = v
 
     def __str__(self):
@@ -64,7 +64,7 @@ class MessageContext(object):
 
         if self.is_mention():
             out += "Mention context:\n"
-            out += "\tMentioned JIDs: %s\n" % ", ".join(self.mentioned_jids)
+            out += "\tMentioned JIDs: %s\n" % ", ".join(self.mentioned_jid)
             if self.remote_jid is not None:
                 out += "\tRemote JID: %s\n" % self.remote_jid
 
@@ -74,7 +74,7 @@ class MessageContext(object):
         return self.stanza_id is not None
 
     def is_mention(self):
-        return self.mentioned_jids is not None
+        return self.mentioned_jid is not None
 
     def get_quoted_message_type(self):
         if self.quoted_message:
@@ -83,8 +83,8 @@ class MessageContext(object):
             return None
 
     def get_mentioned_jids(self):
-        if self.mentioned_jids:
-            return self.mentioned_jids
+        if self.mentioned_jid:
+            return self.mentioned_jid
         else:
             return None
 
