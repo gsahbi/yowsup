@@ -54,8 +54,8 @@ class AxolotlBaseLayer(YowProtocolLayer):
 
     def getKeysFor(self, jids, resultClbk, errorClbk=None):
         def onSuccess(resultNode, getKeysEntity):
-            entity = ResultGetKeysIqProtocolEntity.fromProtocolTreeNode(resultNode)
-            resultJids = entity.getJids()
+            entity_ = ResultGetKeysIqProtocolEntity.fromProtocolTreeNode(resultNode)
+            resultJids = entity_.getJids()
             successJids = []
             errorJids = {}  # jid -> exception
 
@@ -65,7 +65,7 @@ class AxolotlBaseLayer(YowProtocolLayer):
                     continue
 
                 recipient_id = jid.split('@')[0]
-                preKeyBundle = entity.getPreKeyBundleFor(jid)
+                preKeyBundle = entity_.getPreKeyBundleFor(jid)
                 sessionBuilder = SessionBuilder(self.store, self.store, self.store, self.store, recipient_id, 1)
                 try:
                     sessionBuilder.processPreKeyBundle(preKeyBundle)

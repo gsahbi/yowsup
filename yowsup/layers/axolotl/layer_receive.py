@@ -100,8 +100,13 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
                 self.handleSenderKeyMessage(node)
 
         except (InvalidMessageException, InvalidKeyIdException):
-            logger.warning("InvalidMessage or InvalidKeyIdException for %s, going to send a retry",
+            logger.warning("InvalidMessage or InvalidKeyIdException for %s, would to send a retry",
                            Jid.denormalize(encMessageProtocolEntity.getAuthor()))
+
+
+            if node["count"] is not None:
+                logger.warning("This is the second retry forget it")
+                return
 
             from yowsup.layers.axolotl.protocolentities.iq_key_get import GetKeysIqProtocolEntity
             logger.info("Trying GetKeys for %s, getting keys now",
