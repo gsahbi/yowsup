@@ -1,11 +1,13 @@
-from yowsup.layers import YowLayer, YowLayerEvent, YowProtocolLayer
+from yowsup.layers import YowProtocolLayer
 from .protocolentities import *
 from yowsup.layers.protocol_iq.protocolentities import ErrorIqProtocolEntity
+
+
 class YowPresenceProtocolLayer(YowProtocolLayer):
     def __init__(self):
         handleMap = {
             "presence": (self.recvPresence, self.sendPresence),
-            "iq":       (None, self.sendIq)
+            "iq": (None, self.sendIq)
         }
         super(YowPresenceProtocolLayer, self).__init__(handleMap)
 

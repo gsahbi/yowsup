@@ -1,7 +1,9 @@
 from yowsup.layers.protocol_iq.protocolentities.iq_result import ResultIqProtocolEntity
 from yowsup.structs.protocoltreenode import ProtocolTreeNode
+
+
 class ResultLastseenIqProtocolEntity(ResultIqProtocolEntity):
-    def __init__(self, jid, seconds, _id = None):
+    def __init__(self, jid, seconds, _id=None):
         super(ResultLastseenIqProtocolEntity, self).__init__(_from=jid, _id=_id)
         self.setSeconds(seconds)
 
