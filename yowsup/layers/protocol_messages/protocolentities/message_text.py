@@ -5,7 +5,7 @@ from .message import MessageProtocolEntity
 class TextMessageProtocolEntity(MessageProtocolEntity):
 
     def __init__(self, ptn=None, **kwargs):
-        super().__init__(ptn, **kwargs)
+        super().__init__(ptn, message_type="text", **kwargs)
         if ptn:
             TextMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
         else:

@@ -50,16 +50,10 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
         """
         :type protocolTreeNode: ProtocolTreeNode
         """
-        if not self.processIqRegistry(protocolTreeNode):
-            if protocolTreeNode.tag == "message":
-                self.onMessage(protocolTreeNode)
-            elif protocolTreeNode.tag == "notification":  # and protocolTreeNode["type"] == "encrypt":
-                self.onEncryptNotification(protocolTreeNode)
-                return
-            elif not protocolTreeNode.tag == "receipt":
-                # receipts will be handled by send layer
-                self.toUpper(protocolTreeNode)
-
+        if not self.processIqRegistry(protocolTreeNode) and protocolTreeNode.tag == "message":
+            self.onMessage(protocolTreeNode)
+        else:
+            self.toUpper(protocolTreeNode)
 
     def processPendingIncomingMessages(self, jid, participantJid=None):
         conversationIdentifier = (jid, participantJid)
@@ -70,12 +64,6 @@ class AxolotlReceivelayer(AxolotlBaseLayer):
             del self.pendingIncomingMessages[conversationIdentifier]
 
     # handling received data #####
-    def onEncryptNotification(self, protocolTreeNode):
-        entity = EncryptNotification.fromProtocolTreeNode(protocolTreeNode)
-        ack = OutgoingAckProtocolEntity(protocolTreeNode["id"], "notification", protocolTreeNode["type"],
-                                        protocolTreeNode["from"])
-        self.toLower(ack.toProtocolTreeNode())
-        self.sendKeys(fresh=False, countPreKeys=self.__class__._COUNT_PREKEYS - entity.getCount())
 
     def onMessage(self, protocolTreeNode):
         encNode = protocolTreeNode.getChild("enc")
