@@ -1,14 +1,17 @@
 from .notification_groups import GroupsNotificationProtocolEntity
 from yowsup.structs import ProtocolTreeNode
+
+
 class AddGroupsNotificationProtocolEntity(GroupsNotificationProtocolEntity):
-    '''
-<notification participant="{{participant_jiid}}" t="{{TIMESTAMP}}" from="{{group_jid}}" type="w:gp2" id="{{id}}" notify="WhatsApp">
-<add>
-<participant jid="{{JID_1}}">
-</participant>
-</add>
-</notification>
-    '''
+    """
+    <notification participant="{{participant_jiid}}" t="{{TIMESTAMP}}" from="{{group_jid}}" type="w:gp2" id="{{id}}"
+                  notify="WhatsApp">
+        <add>
+            <participant jid="{{JID_1}}"></participant>
+        </add>
+    </notification>
+    """
+
     def __init__(self, _id, _from, timestamp, notify, participant, offline, participants):
         super(AddGroupsNotificationProtocolEntity, self).__init__(_id, _from, timestamp, notify, participant, offline)
         self.setParticipants(participants)
