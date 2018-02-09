@@ -1,22 +1,26 @@
 from yowsup.structs import ProtocolEntity, ProtocolTreeNode
+
+
 class CallProtocolEntity(ProtocolEntity):
-    '''
+    """
     <call offline="0" from="{{CALLER_JID}}" id="{{ID}}" t="{{TIMESTAMP}}" notify="{{CALLER_PUSHNAME}}" retry="{{RETRY}}" e="{{?}}">
     </call>
-    
-    '''
-    def __init__(self, _id, _type, timestamp, notify = None, offline = None, retry = None, e = None, callId = None, _from = None, _to = None):
+
+    """
+
+    def __init__(self, _id, _type, timestamp, notify=None, offline=None, retry=None, e=None, callId=None, _from=None,
+                 _to=None):
         super(CallProtocolEntity, self).__init__("call")
-        self._id            = _id or self._generateId()
-        self._type       = _type
-        self._from      = _from
-        self._to           = _to
-        self.timestamp  = int(timestamp)
-        self.notify     = notify
-        self.offline    = offline == "1"
-        self.retry      = retry
-        self.e             = e
-        self.callId     = callId
+        self._id = _id or self._generateId()
+        self._type = _type
+        self._from = _from
+        self._to = _to
+        self.timestamp = int(timestamp)
+        self.notify = notify
+        self.offline = offline == "1"
+        self.retry = retry
+        self.e = e
+        self.callId = callId
 
     def __str__(self):
         out = "Call\n"
@@ -30,18 +34,18 @@ class CallProtocolEntity(ProtocolEntity):
             out += "Call ID: %s\n" % self.getCallId()
         return out
 
-    def getFrom(self, full = True):
+    def getFrom(self, full=True):
         return self._from if full else self._from.split('@')[0]
-        
+
     def getTo(self):
         return self._to
 
     def getId(self):
         return self._id
-        
+
     def getType(self):
         return self._type
-        
+
     def getCallId(self):
         return self.callId
 
@@ -51,9 +55,9 @@ class CallProtocolEntity(ProtocolEntity):
     def toProtocolTreeNode(self):
         children = []
         attribs = {
-            "t"         : str(self.timestamp),
-            "offline"   : "1" if self.offline else "0",
-            "id"        : self._id,
+            "t": str(self.timestamp),
+            "offline": "1" if self.offline else "0",
+            "id": self._id,
         }
         if self._from is not None:
             attribs["from"] = self._from
@@ -68,7 +72,7 @@ class CallProtocolEntity(ProtocolEntity):
         if self._type in ["offer", "transport", "relaylatency", "reject", "terminate"]:
             child = ProtocolTreeNode(self._type, {"call-id": self.callId})
             children.append(child)
-        return self._createProtocolTreeNode(attribs, children = children, data = None)
+        return self._createProtocolTreeNode(attribs, children=children, data=None)
 
     @staticmethod
     def fromProtocolTreeNode(node):
@@ -104,4 +108,4 @@ class CallProtocolEntity(ProtocolEntity):
             callId,
             node.getAttributeValue("from"),
             node.getAttributeValue("to")
-            )
+        )

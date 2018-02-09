@@ -1,14 +1,16 @@
 from yowsup.structs import ProtocolTreeNode
 from .notification_contact import ContactNotificationProtocolEntity
+
+
 class UpdateContactNotificationProtocolEntity(ContactNotificationProtocolEntity):
-    '''
-    <notification offline="0" id="{{NOTIFICATION_ID}}" notify="{{NOTIFY_NAME}}" type="contacts" 
+    """
+    <notification offline="0" id="{{NOTIFICATION_ID}}" notify="{{NOTIFY_NAME}}" type="contacts"
             t="{{TIMESTAMP}}" from="{{SENDER_JID}}">
         <update jid="{{SET_JID}}"> </update>
     </notification>
-    '''
+    """
 
-    def __init__(self, _id,  _from, timestamp, notify, offline, contactJid):
+    def __init__(self, _id, _from, timestamp, notify, offline, contactJid):
         super(UpdateContactNotificationProtocolEntity, self).__init__(_id, _from, timestamp, notify, offline)
         self.setData(contactJid)
 

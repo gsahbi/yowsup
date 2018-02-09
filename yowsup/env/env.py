@@ -6,11 +6,13 @@ logger = logging.getLogger(__name__)
 
 DEFAULT = "s40"
 
+
 class YowsupEnvType(abc.ABCMeta):
     def __init__(cls, name, bases, dct):
         if name != "YowsupEnv":
             YowsupEnv.registerEnv(cls)
         super(YowsupEnvType, cls).__init__(name, bases, dct)
+
 
 class YowsupEnv(with_metaclass(YowsupEnvType, object)):
     __metaclass__ = YowsupEnvType
@@ -27,14 +29,14 @@ class YowsupEnv(with_metaclass(YowsupEnvType, object)):
 
     @classmethod
     def setEnv(cls, envName):
-        if not envName in cls.__ENVS:
+        if envName not in cls.__ENVS:
             raise ValueError("%s env does not exist" % envName)
         logger.debug("Current env changed to %s " % envName)
         cls.__CURR = cls.__ENVS[envName]()
 
     @classmethod
     def getEnv(cls, envName):
-        if not envName in cls.__ENVS:
+        if envName not in cls.__ENVS:
             raise ValueError("%s env does not exist" % envName)
 
         return cls.__ENVS[envName]()
@@ -90,9 +92,9 @@ class YowsupEnv(with_metaclass(YowsupEnvType, object)):
 
     def getUserAgent(self):
         return self.__class__._USERAGENT_STRING.format(
-            WHATSAPP_VERSION = self.getVersion(),
-            OS_NAME = self.getOSName(),
-            OS_VERSION = self.getOSVersion(),
-            MANUFACTURER = self.getManufacturer(),
-            DEVICE_NAME = self.getDeviceName()
+            WHATSAPP_VERSION=self.getVersion(),
+            OS_NAME=self.getOSName(),
+            OS_VERSION=self.getOSVersion(),
+            MANUFACTURER=self.getManufacturer(),
+            DEVICE_NAME=self.getDeviceName()
         )
