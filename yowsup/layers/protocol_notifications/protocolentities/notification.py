@@ -15,7 +15,7 @@ class NotificationProtocolEntity(ProtocolEntity):
         self._id        = _id
         self._from      =_from
         self.timestamp  = int(timestamp)
-        self.notify     = notify
+        self.notify     = notify.encode('latin-1').decode('utf-8')
         self.offline    = offline == "1"
    
 
@@ -33,6 +33,9 @@ class NotificationProtocolEntity(ProtocolEntity):
 
     def getId(self):
         return self._id
+
+    def getNotify(self):
+        return self.notify
 
     def getTimestamp(self):
         return self.timestamp

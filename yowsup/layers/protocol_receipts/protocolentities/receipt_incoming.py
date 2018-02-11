@@ -53,6 +53,9 @@ class IncomingReceiptProtocolEntity(ReceiptProtocolEntity):
     def getFrom(self, full=True):
         return self._from if full else self._from.split('@')[0]
 
+    def isGroup(self):
+        return self.participant is not None
+
     def setIncomingData(self, _from, timestamp, offline, type=None, participant=None, items=None):
         self._from = _from
         self.timestamp = timestamp
