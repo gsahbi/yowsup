@@ -2,14 +2,12 @@
 import logging
 from random import randint
 
-import os
 from axolotl.axolotladdress import AxolotlAddress
 from axolotl.groups.groupcipher import GroupCipher
 from axolotl.groups.groupsessionbuilder import GroupSessionBuilder
 from axolotl.groups.senderkeyname import SenderKeyName
 from axolotl.protocol.whispermessage import WhisperMessage
 from axolotl.sessioncipher import SessionCipher
-
 from yowsup.common.protobuf_to_dict.convertor import dict_to_protobuf
 from yowsup.common.tools import Jid
 from yowsup.layers.auth.layer_authentication import YowAuthenticationProtocolLayer
@@ -117,31 +115,31 @@ class AxolotlSendLayer(AxolotlBaseLayer):
         else:
             self.toLower(node)
 
-    def receive(self, protocolTreeNode):
-        if not self.processIqRegistry(protocolTreeNode):
-            if protocolTreeNode.tag == "receipt":
-                # Going to keep all group message enqueued, as we get receipts from each participant
-                # So can't just remove it on first receipt. Therefore, the MAX queue length mechanism
-                # should better be working
-                messageNode = self.getEnqueuedMessageNode(protocolTreeNode["id"],
-                                                          protocolTreeNode["participant"] is not None)
-                if not messageNode:
-                    logger.debug("Axolotl layer does not have the message, bubbling it upwards")
-                    self.toUpper(protocolTreeNode)
-                elif protocolTreeNode["type"] == "retry":
-                    logger.info(
-                        "Got retry to for message %s, and Axolotl layer has the message" % protocolTreeNode["id"])
-                    retryReceiptEntity = RetryIncomingReceiptProtocolEntity.fromProtocolTreeNode(protocolTreeNode)
-                    self.toLower(retryReceiptEntity.ack().toProtocolTreeNode())
-                    self.getKeysFor(
-                        [protocolTreeNode["participant"] or protocolTreeNode["from"]],
-                        lambda successJids, b: self.processMessageAndSend(messageNode, retryReceiptEntity) if len(
-                            successJids) == 1 else None,
-                        errorClbk=lambda errorNode, getKeysEntity: logger.error("Failed at getting keys during retry")
-                    )
-                else:
-                    # not interested in any non retry receipts, bubble upwards
-                    self.toUpper(protocolTreeNode)
+    # def receive(self, protocolTreeNode):
+    #     if not self.processIqRegistry(protocolTreeNode):
+    #         if protocolTreeNode.tag == "receipt":
+    #             # Going to keep all group message enqueued, as we get receipts from each participant
+    #             # So can't just remove it on first receipt. Therefore, the MAX queue length mechanism
+    #             # should better be working
+    #             messageNode = self.getEnqueuedMessageNode(protocolTreeNode["id"],
+    #                                                       protocolTreeNode["participant"] is not None)
+    #             if not messageNode:
+    #                 logger.debug("Axolotl layer does not have the message, bubbling it upwards")
+    #                 self.toUpper(protocolTreeNode)
+    #             elif protocolTreeNode["type"] == "retry":
+    #                 logger.info(
+    #                     "Got retry to for message %s, and Axolotl layer has the message" % protocolTreeNode["id"])
+    #                 retryReceiptEntity = RetryIncomingReceiptProtocolEntity.fromProtocolTreeNode(protocolTreeNode)
+    #                 self.toLower(retryReceiptEntity.ack().toProtocolTreeNode())
+    #                 self.getKeysFor(
+    #                     [protocolTreeNode["participant"] or protocolTreeNode["from"]],
+    #                     lambda successJids, b: self.processMessageAndSend(messageNode, retryReceiptEntity) if len(
+    #                         successJids) == 1 else None,
+    #                     errorClbk=lambda errorNode, getKeysEntity: logger.error("Failed at getting keys during retry")
+    #                 )
+    #             else:
+    #                 # not interested in any non retry receipts, bubble upwards
+    #                 self.toUpper(protocolTreeNode)
 
     def processMessageAndSend(self, node, retryReceiptEntity=None):
         recipient_id = node["to"].split('@')[0]
