@@ -1,10 +1,5 @@
-import binascii
 import logging
 
-from Crypto.Cipher import AES
-
-from axolotl.kdf.hkdfv3 import HKDFv3
-from axolotl.util.byteutil import ByteUtil
 from yowsup.common.tools import MimeTools
 from yowsup.structs import ProtocolTreeNode
 from .message import MessageProtocolEntity
@@ -86,15 +81,8 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
         out += "File %s encrypted\n" % ("is" if self.is_encrypted() else "is NOT")
         return out
 
-    def decrypt(self, encdata, refkey):
-        derivative = HKDFv3().deriveSecrets(refkey, binascii.unhexlify(self.crypt_keys), 112)
-        parts = ByteUtil.split(derivative, 16, 32)
-        iv = parts[0]
-        cipherKey = parts[1]
-        e_data = encdata[:-10]
-        AES.key_size = 128
-        cr_obj = AES.new(key=cipherKey, mode=AES.MODE_CBC, IV=iv)
-        return cr_obj.decrypt(e_data)
+    def is_downloadable(self):
+        return True
 
     def is_encrypted(self):
         return self.crypt_keys and self.media_key

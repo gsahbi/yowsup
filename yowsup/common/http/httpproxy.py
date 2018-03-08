@@ -19,18 +19,15 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import os, base64
+import base64
+import os
+from urllib.parse import urlparse
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 class HttpProxy:
-    
     instance = None
 
-    def __init__(self, address, username = None, password = None):
+    def __init__(self, address, username=None, password=None):
         self.address = address
         self.username = username
         self.password = password
@@ -42,9 +39,9 @@ class HttpProxy:
         return HttpProxyHandler(self)
 
     @staticmethod
-    def setProxy(address, port=443, username = None, password = None):
-       proxy = HttpProxy((address,port),username, password)
-       HttpProxy.instance = proxy
+    def setProxy(address, port=443, username=None, password=None):
+        proxy = HttpProxy((address, port), username, password)
+        HttpProxy.instance = proxy
 
     @staticmethod
     def getFromEnviron():
@@ -74,6 +71,7 @@ class HttpProxy:
     def getPassword(self):
         return self.password
 
+
 class HttpProxyHandler:
 
     def __init__(self, proxy):
@@ -87,7 +85,8 @@ class HttpProxyHandler:
         proxy = self.proxy
         authHeader = None
         if proxy.username and proxy.password:
-            key = bytes(proxy.username, 'ascii') + b':' + bytes(proxy.password, 'ascii') if (bytes != str) else bytes(proxy.username) + b':' + proxy.password
+            key = bytes(proxy.username, 'ascii') + b':' + bytes(proxy.password, 'ascii') if (bytes != str) else bytes(
+                proxy.username) + b':' + proxy.password
             auth = base64.b64encode(key)
             authHeader = b'Proxy-Authorization: Basic ' + auth + b'\r\n'
         data = bytearray('CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n' % (2 * pair), 'ascii')

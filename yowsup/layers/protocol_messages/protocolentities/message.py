@@ -212,6 +212,9 @@ class MessageProtocolEntity(ProtocolEntity):
             return "-" in self.destination
         return self.participant is not None
 
+    def is_downloadable(self):
+        return False
+
     def __str__(self):
         out = "Message:\n"
         out += "ID: %s\n" % self.message_id

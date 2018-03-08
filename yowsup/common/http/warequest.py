@@ -1,16 +1,18 @@
-import urllib,sys, os, logging
-import hashlib
-from .waresponseparser import ResponseParser
+import logging
+import sys
+
 from yowsup.env import YowsupEnv
 from .httpproxy import HttpProxy
+from .waresponseparser import ResponseParser
 
 if sys.version_info < (3, 0):
     import httplib
     from urllib import urlencode
 
     if sys.version_info >= (2, 7, 9):
-        #see https://github.com/tgalal/yowsup/issues/677
+        # see https://github.com/tgalal/yowsup/issues/677
         import ssl
+
         ssl._create_default_https_context = ssl._create_unverified_context
 
 else:
@@ -21,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 
 class WARequest(object):
-
     OK = 200
 
     def __init__(self):
@@ -45,14 +46,13 @@ class WARequest(object):
         elif name == "result":
             self.result = value
 
-    def addParam(self,name,value):
-        self.params.append((name,value))
+    def addParam(self, name, value):
+        self.params.append((name, value))
 
     def removeParam(self, name):
         for i in range(0, len(self.params)):
             if self.params[i][0] == name:
                 del self.params[i]
-
 
     def addHeaderField(self, name, value):
         self.headers[name] = value
@@ -63,7 +63,7 @@ class WARequest(object):
     def getUserAgent(self):
         return YowsupEnv.getCurrent().getUserAgent()
 
-    def send(self, parser = None):
+    def send(self, parser=None):
 
         if self.type == "POST":
             return self.sendPostRequest(parser)
@@ -94,23 +94,23 @@ class WARequest(object):
 
         return host, self.port, path
 
-    def sendGetRequest(self, parser = None):
+    def sendGetRequest(self, parser=None):
         self.response = None
-        params =  self.params#[param.items()[0] for param in self.params];
+        params = self.params  # [param.items()[0] for param in self.params];
 
         parser = parser or self.parser or ResponseParser()
 
-        headers = dict(list({"User-Agent":self.getUserAgent(),
-                "Accept": parser.getMeta()
-            }.items()) + list(self.headers.items()));
+        headers = dict(list({"User-Agent": self.getUserAgent(),
+                             "Accept": parser.getMeta()
+                             }.items()) + list(self.headers.items()));
 
-        host,port,path = self.getConnectionParameters()
+        host, port, path = self.getConnectionParameters()
         proxy = HttpProxy.getFromEnviron()
         if proxy is None:
             self.response = WARequest.sendRequest(host, port, path, headers, params, "GET")
 
             if not self.response.status == WARequest.OK:
-                logger.error("Request not success, status was %s"%self.response.status)
+                logger.error("Request not success, status was %s" % self.response.status)
                 return {}
 
             data = self.response.read()
@@ -120,25 +120,23 @@ class WARequest(object):
             return parser.parse(data.decode(), self.pvars)
         else:
             logger.info("Request with proxy")
-            self.response = WARequest.sendRequestWithProxy(host, port,path,headers, params, proxy)
+            self.response = WARequest.sendRequestWithProxy(host, port, path, headers, params, proxy)
             logger.info(self.response)
             return self.response
 
-
-    def sendPostRequest(self, parser = None):
+    def sendPostRequest(self, parser=None):
         self.response = None
-        params =  self.params #[param.items()[0] for param in self.params];
+        params = self.params  # [param.items()[0] for param in self.params];
 
         parser = parser or self.parser or ResponseParser()
 
-        headers = dict(list({"User-Agent":self.getUserAgent(),
-                "Accept": parser.getMeta(),
-                "Content-Type":"application/x-www-form-urlencoded"
-            }.items()) + list(self.headers.items()))
+        headers = dict(list({"User-Agent": self.getUserAgent(),
+                             "Accept": parser.getMeta(),
+                             "Content-Type": "application/x-www-form-urlencoded"
+                             }.items()) + list(self.headers.items()))
 
-        host,port,path = self.getConnectionParameters()
+        host, port, path = self.getConnectionParameters()
         self.response = WARequest.sendRequest(host, port, path, headers, params, "POST")
-
 
         if not self.response.status == WARequest.OK:
             logger.error("Request not success, status was %s" % self.response.status)
@@ -151,14 +149,12 @@ class WARequest(object):
         self.sent = True
         return parser.parse(data.decode(), self.pvars)
 
-
     @staticmethod
     def sendRequest(host, port, path, headers, params, reqType="GET"):
 
         params = urlencode(params)
 
-
-        path = path + "?"+ params if reqType == "GET" and params else path
+        path = path + "?" + params if reqType == "GET" and params else path
 
         if len(headers):
             logger.debug(headers)
@@ -166,7 +162,7 @@ class WARequest(object):
             logger.debug(params)
 
         logger.debug("Opening connection to %s" % host);
-        conn = httplib.HTTPSConnection(host ,port) if port == 443 else httplib.HTTPConnection(host ,port)
+        conn = httplib.HTTPSConnection(host, port) if port == 443 else httplib.HTTPConnection(host, port)
 
         logger.debug("Sending %s request to %s" % (reqType, path))
         conn.request(reqType, path, params, headers);
@@ -174,20 +170,20 @@ class WARequest(object):
         response = conn.getresponse()
         return response
 
-    def sendRequestWithProxy(host,port,path,headers,params,proxy):
+    def sendRequestWithProxy(host, port, path, headers, params, proxy):
         import pycurl
         import json
         from io import BytesIO
-        logger.info("SENDING PROXY REQUEST WITH %s"%proxy.getHost())
+        logger.info("SENDING PROXY REQUEST WITH %s" % proxy.getHost())
         bytes_buffer = BytesIO()
         c = pycurl.Curl()
-        c.setopt(pycurl.URL, WARequest.build_get_url(host,path,params))
-        c.setopt(pycurl.PROXY,proxy.getHost())
-        c.setopt(pycurl.PROXYPORT,proxy.getPort())
+        c.setopt(pycurl.URL, WARequest.build_get_url(host, path, params))
+        c.setopt(pycurl.PROXY, proxy.getHost())
+        c.setopt(pycurl.PROXYPORT, proxy.getPort())
         if proxy.getUserName() is not None:
             c.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (proxy.getUser(), proxy.getPassword()))
         c.setopt(pycurl.PORT, port)
-        c.setopt(pycurl.HTTPHEADER,WARequest.build_headers(headers))
+        c.setopt(pycurl.HTTPHEADER, WARequest.build_headers(headers))
         c.setopt(pycurl.WRITEDATA, bytes_buffer)
         c.perform()
         c.close()
@@ -197,13 +193,12 @@ class WARequest(object):
     @staticmethod
     def build_get_url(host, path, params):
         params = urlencode(params)
-        url = 'https://'+host+path+"?"+params
+        url = 'https://' + host + path + "?" + params
         return url
 
     @staticmethod
     def build_headers(headers_tuple):
         headers_array = []
         for idx in headers_tuple:
-            headers_array.append(idx + ":"+headers_tuple[idx])
+            headers_array.append(idx + ":" + headers_tuple[idx])
         return headers_array
-
