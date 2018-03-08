@@ -1,7 +1,6 @@
 import logging
 import sys
 import tempfile
-from urllib.parse import urlencode
 from urllib.request import urlopen
 
 logger = logging.getLogger(__name__)
@@ -13,20 +12,9 @@ class MediaDownloader:
         self.errorCallback = errorClbk
         self.progressCallback = progressCallback
 
-    def download(self, url=""):
+    def download(self, url, successCallback=None, errorCallback=None, progressCallback=None):
         try:
-
-            if not url:
-                if self.url:
-                    url = "https://" if self.port == 443 else "http://"
-                    url = url + self.url
-                    url = url + "?" + urlencode(self.params)
-                    logger.debug("URL is %s" % url)
-                else:
-                    raise Exception("No url specified for fetching")
-
             u = urlopen(url)
-
             path = tempfile.mkstemp()[1]
             with open(path, "wb") as f:
                 meta = u.info()
@@ -51,11 +39,11 @@ class MediaDownloader:
 
                     if self.progressCallback and lastEmit != status:
                         self.progressCallback(int(status))
-                        lastEmit = status;
+                        lastEmit = status
 
             if self.successCallback:
                 self.successCallback(path)
-        except:
-            logger.exception("Error occured at transfer")
+        except Exception as e:
+            logger.exception("Error occured at transfer " + str(e))
             if self.errorCallback:
-                self.errorCallback();
+                self.errorCallback()

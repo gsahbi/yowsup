@@ -23,7 +23,7 @@ message SKDMessage {
 }
 
 message ImageMessage {
-    bytes url             = 1;
+    string url = 1;
     string mime_type      = 2;
     string caption        = 3;
     bytes file_sha256     = 4;
@@ -37,7 +37,7 @@ message ImageMessage {
 }
 
 message AudioMessage {
-    bytes url             = 1;
+    string url = 1;
     string mime_type      = 2;
     bytes file_sha256     = 3;
     uint64 file_length    = 4;
@@ -49,7 +49,7 @@ message AudioMessage {
 }
 
 message VideoMessage {
-    bytes url             = 1;
+    string url = 1;
     string mime_type      = 2;
     bytes file_sha256     = 3;
     uint64 file_length    = 4;
@@ -80,7 +80,7 @@ message DocumentMessage {
     uint64 file_length    = 5;
     uint32 page_count     = 6;
     bytes media_key       = 7;
-    bytes file_name       = 8;
+    string file_name = 8;
     bytes file_enc_sha256 = 9;
     bytes jpeg_thumbnail  = 16;
     ContextInfo context_info  = 17;

@@ -1,6 +1,5 @@
-from yowsup.structs import ProtocolTreeNode
-
 from yowsup.common.tools import ImageTools
+from yowsup.structs import ProtocolTreeNode
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 
@@ -12,7 +11,7 @@ class ImageMessageProtocolEntity(DownloadableMessageProtocolEntity):
             ImageMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
         else:
             ImageMessageProtocolEntity.load_properties(self, **kwargs)
-        self.crypt_keys = '576861747341707020566964656f204b657973'
+        self.crypt_keys = '576861747341707020496d616765204b657973'
 
     @property
     def height(self):

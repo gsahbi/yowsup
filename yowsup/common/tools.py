@@ -5,6 +5,7 @@ import datetime
 import hashlib
 import logging
 import math
+import mimetypes
 import os
 import os.path
 import re
@@ -37,6 +38,7 @@ class Jid:
         if '@' in number:
             return number.split("@", 1)[0]
         return number
+
 
 class HexTools:
     decode_hex = codecs.getdecoder("hex_codec")
@@ -337,3 +339,28 @@ class VideoTools:
                 preview = ImageTools.generatePreviewFromImage(path)
                 os.remove(path)
                 return preview
+
+
+class MimeTools:
+    MIME_FILE = os.path.join(os.path.dirname(__file__), 'mime.types')
+    # Load default mime.types
+    mimetypes.init()
+    try:
+        # Append whatsapp mime.types
+        mimetypes.init([MIME_FILE])
+    except Exception as e:
+        logger.warning("Mime types supported can't be read. System mimes will be used. Cause: " + str(e))
+
+    @staticmethod
+    def getMIME(filepath):
+        mimeType = mimetypes.guess_type(filepath)[0]
+        if mimeType is None:
+            raise Exception("Unsupported/unrecognized file type for: " + filepath)
+        return mimeType
+
+    @staticmethod
+    def getExtension(mimeType):
+        mimeType = mimetypes.guess_extension(mimeType)
+        if mimeType is None:
+            raise Exception("Unsupported/unrecognized file type for: " + mimeType)
+        return mimeType

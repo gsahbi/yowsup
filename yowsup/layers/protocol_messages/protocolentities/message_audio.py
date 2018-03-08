@@ -1,14 +1,10 @@
-from urllib.request import urlopen
-
-from yowsup.structs import ProtocolTreeNode
-
 from yowsup.common.tools import AudioTools
+from yowsup.structs import ProtocolTreeNode
 from .message_downloadable import DownloadableMessageProtocolEntity
 
 
 class AudioMessageProtocolEntity(DownloadableMessageProtocolEntity):
 
-    crypt_keys = '576861747341707020496d616765204b657973'
 
     def __init__(self, ptn=None, **kwargs):
         super().__init__(ptn, **kwargs)
@@ -17,7 +13,7 @@ class AudioMessageProtocolEntity(DownloadableMessageProtocolEntity):
         else:
             AudioMessageProtocolEntity.load_properties(self, **kwargs)
 
-        self.crypt_keys = '576861747341707020566964656f204b657973'
+        self.crypt_keys = '576861747341707020417564696f204b657973'
 
 
     @property

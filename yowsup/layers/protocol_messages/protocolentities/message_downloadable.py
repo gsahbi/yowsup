@@ -1,11 +1,21 @@
 import binascii
-import mimetypes
-from urllib.request import urlopen
+import logging
+
 from Crypto.Cipher import AES
+
 from axolotl.kdf.hkdfv3 import HKDFv3
 from axolotl.util.byteutil import ByteUtil
+from yowsup.common.tools import MimeTools
 from yowsup.structs import ProtocolTreeNode
 from .message import MessageProtocolEntity
+
+logger = logging.getLogger(__name__)
+
+wa_mimes = {
+    'audio/ogg; codecs=opus': '.ogg',
+    'image/jpeg': '.jpg',
+    'text/plain': '.txt'
+}
 
 
 class DownloadableMessageProtocolEntity(MessageProtocolEntity):
@@ -19,49 +29,49 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
 
         self.crypt_keys = None
 
-
     @property
-    def url(self): return self._url
+    def url(self):
+        return self._url
 
     @url.setter
     def url(self, v):
         self._url = v
 
-
     @property
-    def mime_type(self): return self._mime_type
+    def mime_type(self):
+        return self._mime_type
 
     @mime_type.setter
     def mime_type(self, v):
         self._mime_type = v
 
-
     @property
-    def file_sha256(self): return self._file_sha256
+    def file_sha256(self):
+        return self._file_sha256
 
     @file_sha256.setter
     def file_sha256(self, v):
         self._file_sha256 = v
 
-
     @property
-    def file_length(self): return self._file_length
+    def file_length(self):
+        return self._file_length
 
     @file_length.setter
     def file_length(self, v):
         self._file_length = int(v) if v else 0
 
-
     @property
-    def media_key(self): return self._media_key
+    def media_key(self):
+        return self._media_key
 
     @media_key.setter
     def media_key(self, v):
         self._media_key = v
 
-
     @property
-    def file_enc_sha256(self): return self._file_enc_sha256
+    def file_enc_sha256(self):
+        return self._file_enc_sha256
 
     @file_enc_sha256.setter
     def file_enc_sha256(self, v):
@@ -89,14 +99,12 @@ class DownloadableMessageProtocolEntity(MessageProtocolEntity):
     def is_encrypted(self):
         return self.crypt_keys and self.media_key
 
-    def getMediaContent(self):
-        data = urlopen(self.url.decode('ASCII')).read()
-        if self.is_encrypted():
-            data = self.decrypt(data, self.media_key)
-        return bytearray(data)
-
     def get_extension(self):
-        return mimetypes.guess_extension(self.mime_type)
+        # try well known extensions
+        if self.mime_type in wa_mimes:
+            return wa_mimes[self.mime_type]
+
+        return MimeTools.getExtension(self.mime_type)
 
     def toProtocolTreeNode(self):
         node = super().toProtocolTreeNode()
