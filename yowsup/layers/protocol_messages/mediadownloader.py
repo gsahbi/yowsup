@@ -4,6 +4,7 @@ import logging
 import os
 import tempfile
 import threading
+import uuid
 from urllib.request import urlopen
 
 from Crypto.Cipher import AES
@@ -18,9 +19,10 @@ logger = logging.getLogger(__name__)
 class MediaDownloader(threading.Thread):
 
     def __init__(self, me: DownloadableMessageProtocolEntity,
-                 successCallback=None, errorCallback=None, progressCallback=None, asynch=False):
+                 successCallback=None, errorCallback=None, progressCallback=None, path=None, asynch=False):
         assert me
         self.me = me
+        self.path = path
         self.successCallback = successCallback
         self.errorCallback = errorCallback
         self.progressCallback = progressCallback
@@ -56,7 +58,12 @@ class MediaDownloader(threading.Thread):
                 raise Exception("downloaded file checksum is incorrect")
 
             key = self.me.media_key
-            out = os.path.splitext(enc_path)[0] + self.me.get_extension() or ''
+
+            if self.path is None:
+                out = os.path.splitext(enc_path)[0] + self.me.get_extension() or '.raw'
+            else:
+                out = os.path.join(self.path, uuid.uuid4().hex + self.me.get_extension() or '.raw')
+
 
             if self.progressCallback:
                 self.progressCallback("Decrypting file %s" % enc_path)
@@ -109,7 +116,7 @@ class MediaDownloader(threading.Thread):
             raise Exception("Error occured at transfer " + str(e))
 
     @staticmethod
-    def decrypt_file(enc_path, media_key, wakey, out_path=""):
+    def decrypt_file(enc_path, media_key, wakey, out_path):
         media_key = binascii.hexlify(media_key)
         derivative = HKDFv3().deriveSecrets(binascii.unhexlify(media_key), binascii.unhexlify(wakey), 112)
 
@@ -118,9 +125,6 @@ class MediaDownloader(threading.Thread):
         cipher_key = splits[1]
         bs = AES.block_size
         cipher = AES.new(key=cipher_key, mode=AES.MODE_CBC, IV=iv)
-
-        if out_path == "":
-            out_path = os.path.splitext(enc_path)[0]
 
         chunk_size = 4096 * bs
         with open(enc_path, "rb") as in_file:
