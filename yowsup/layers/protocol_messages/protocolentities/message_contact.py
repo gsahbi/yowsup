@@ -14,6 +14,7 @@ class ContactMessageProtocolEntity(MessageProtocolEntity):
             ContactMessageProtocolEntity.fromProtocolTreeNode(self, ptn)
         else:
             ContactMessageProtocolEntity.load_properties(self, **kwargs)
+            self.message_type = 'media'
 
     @property
     def caption(self):
@@ -47,9 +48,9 @@ class ContactMessageProtocolEntity(MessageProtocolEntity):
 
 
         if len(self.vcards) > 1:
-            assert self.media_type == "contact_array"
+            # assert self.media_type == "contact_array"
             attribs = {
-                "mediatype": self.media_type,
+                "mediatype": "contact_array",
                 "type": "contact_array"
             }
             data = {
@@ -58,10 +59,10 @@ class ContactMessageProtocolEntity(MessageProtocolEntity):
             }
         elif len(self.vcards) == 1:
             attribs = {
-                "mediatype": self.media_type,
+                "mediatype": "vcard",
                 "type": "contact"
             }
-            assert self.media_type == "vcard"
+            # assert self.media_type == "vcard"
             data = self.vcards[0]
         else:
             logger.error("No vcards to unload !")
