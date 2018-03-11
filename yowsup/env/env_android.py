@@ -1,11 +1,12 @@
-from .env import YowsupEnv
 import base64
 import hashlib
+
+from .env import YowsupEnv
 
 
 class AndroidYowsupEnv(YowsupEnv):
     _SIGNATURE = "MIIDMjCCAvCgAwIBAgIETCU2pDALBgcqhkjOOAQDBQAwfDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFDASBgNV" \
-        "BAcTC1NhbnRhIENsYXJhMRYwFAYDVQQKEw1XaGF0c0FwcCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEUMBIGA1UEAxMLQnJ" \
+                 "BAcTC1NhbnRhIENsYXJhMRYwFAYDVQQKEw1XaGF0c0FwcCBJbmMuMRQwEgYDVQQLEwtFbmdpbmVlcmluZzEUMBIGA1UEAxMLQnJ" \
         "pYW4gQWN0b24wHhcNMTAwNjI1MjMwNzE2WhcNNDQwMjE1MjMwNzE2WjB8MQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5" \
         "pYTEUMBIGA1UEBxMLU2FudGEgQ2xhcmExFjAUBgNVBAoTDVdoYXRzQXBwIEluYy4xFDASBgNVBAsTC0VuZ2luZWVyaW5nMRQwEg" \
         "YDVQQDEwtCcmlhbiBBY3RvbjCCAbgwggEsBgcqhkjOOAQBMIIBHwKBgQD9f1OBHXUSKVLfSpwu7OTn9hG3UjzvRADDHj+AtlEm" \
@@ -17,12 +18,11 @@ class AndroidYowsupEnv(YowsupEnv):
         "YHNtYoIvt5R3X6YZylbPftF/8ayWTALBgcqhkjOOAQDBQADLwAwLAIUAKYCp0d6z4QQdyN74JDfQ2WCyi8CFDUM4CaNB+ceVXd" \
         "KtOrNTQcc0e+t"
 
-    _MD5_CLASSES = "uts7K11+PDyZE5R0ou+2Sw=="
-    _KEY = "eQV5aq/Cg63Gsq1sshN9T3gh+UUp0wIw0xgHYT1bnCjEqOJQKCRrWxdAe2yvsDeCJL+Y4G3PRD2HUF7oUgiGo8vGlNJOaux26k+A2F3hj8A="
-
-    _VERSION = "2.17.337"
+    _MD5_CLASSES = "tYtToHoifxxDaoV9vDeQog=="
+    _KEY = "eQV5aq/Cg63Gsq1sshN9T3gh+UUp0wIw0xgHYT1bnCjEqOJQKCRrWxdAe2yvsDeCJL+Y4G3PRD2HUF7oUgiGo8vGlNJOaux26k" \
+           "+A2F3hj8A= "
+    _VERSION = "2.18.78"
     _OS_NAME = "Android"
-	#new
     _OS_VERSION = "4.3"
     _DEVICE_NAME = "endeavoru"
     _MANUFACTURER = "HTC"
@@ -61,13 +61,13 @@ class AndroidYowsupEnv(YowsupEnv):
         for i in range(0, 64):
             opad.append(0x5C ^ keyDecoded[i])
             ipad.append(0x36 ^ keyDecoded[i])
-        hash = hashlib.sha1()
+        hashh = hashlib.sha1()
         subHash = hashlib.sha1()
         try:
             subHash.update(ipad + data)
-            hash.update(opad + subHash.digest())
+            hashh.update(opad + subHash.digest())
         except TypeError:
             subHash.update(bytes(ipad + data))
-            hash.update(bytes(opad + subHash.digest()))
-        result = base64.b64encode(hash.digest())
+            hashh.update(bytes(opad + subHash.digest()))
+        result = base64.b64encode(hashh.digest())
         return result
