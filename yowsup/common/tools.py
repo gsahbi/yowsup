@@ -13,13 +13,13 @@ import sys
 import tempfile
 import time
 import urllib.request
-
 from PIL import Image
 from dateutil import tz
-from preview_generator.manager import PreviewManager
 
 from .constants import YowConstants
 from .optionalmodules import PILOptionalModule, FFVideoOptionalModule
+
+# from preview_generator.manager import PreviewManager
 
 logger = logging.getLogger(__name__)
 
